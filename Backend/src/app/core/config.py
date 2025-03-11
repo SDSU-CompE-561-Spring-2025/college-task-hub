@@ -6,14 +6,22 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings(BaseSettings):
-    # The database URL which gets populated from the .env file
+    """
+    Settings class to hold configuration values loaded from the .env file.
+    """
     DATABASE_URL: str 
 
-    # The model config which automatically loads the .env file and populates the variables
-    model_config = SettingsConfigDict(env_file = ".env", env_file_encoding = "utf-8") 
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
-@lru_cache # Cache the settings to avoid reading the .env file multiple times
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+
+@lru_cache
 def get_settings() -> Settings:
+    """
+    Get the settings instance, cached to avoid reloading the .env file multiple times.
+    """
     return Settings()
 
 settings = get_settings()

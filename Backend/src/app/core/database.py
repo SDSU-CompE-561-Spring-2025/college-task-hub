@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
 
 # Gets the database URL from config.py
-SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL 
+SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 
 # Create an engine
 # Engine is responsible for managing the connection to the database

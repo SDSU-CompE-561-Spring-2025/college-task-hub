@@ -6,7 +6,7 @@ class Users(Base):
     ORM model for the users table
     '''
     __tablename__ = "users"
-
+    # Testing
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)

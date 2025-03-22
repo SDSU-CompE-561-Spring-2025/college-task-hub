@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from enum import Enum
 
 class LocationsBase(BaseModel):
     street: str
@@ -17,3 +16,4 @@ class LocationsResponse(LocationsBase):
 
     class Config:
         from_attributes = True
+

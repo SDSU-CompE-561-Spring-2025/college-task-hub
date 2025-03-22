@@ -1,12 +1,15 @@
+from pydantic import BaseModel
+from datetime import datetime
+
 class RatingsBase(BaseModel):
     rating: int
-    comment: str
+    comment: str | None = None
     created_at: datetime
 
-class RatingsCreate(ratingsBase):
+class RatingsCreate(RatingsBase):
     pass
 
-class RatingsResponse(ratingsBase):
+class RatingsResponse(RatingsBase):
     id: int 
 
     class Config:

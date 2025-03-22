@@ -1,4 +1,3 @@
-from datetime import datetime
 from pydantic import BaseModel, constr, EmailStr, Field
 
 
@@ -22,15 +21,8 @@ class Users(UsersBase):
     class Config:
         from_attributes = True
 
-
-class UsersResponse(BaseModel):
+class UsersResponse(UsersBase):
     id: int
-    name: str
-    email: EmailStr
-    skills: str | None = None
-    roles: str | None = None
-    rating: int | None = None
-    phone_number: str
-
+    
     class Config:
         from_attributes = True

@@ -1,3 +1,6 @@
+from pydantic import BaseModel
+from datetime import datetime
+
 class TasksBase(BaseModel):
     title: str
     description: str

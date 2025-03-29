@@ -14,5 +14,5 @@ app.include_router(notifications.router, prefix="/api", tags=["notifications"])
 app.include_router(ratings.router, prefix="/api", tags=["ratings"])
 
 @app.get("/")
-async def root():
-    return {"message": "Welcome to the API!"}
+def root():
+    return {"Hello:World"}

@@ -12,7 +12,7 @@ class TasksCreate(TasksBase):
     pass
 
 class TasksResponse(TasksBase):
-    id: int 
+    id: int
 
     class Config:
         from_attributes = True

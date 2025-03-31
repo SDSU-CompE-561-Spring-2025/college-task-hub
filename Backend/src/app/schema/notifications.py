@@ -11,7 +11,6 @@ class NotificationsCreate(NotificationsBase):
 
 class NotificationsResponse(NotificationsBase):
     id: int
-    
+
     class Config:
         from_attributes = True
-

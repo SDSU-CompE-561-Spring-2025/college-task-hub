@@ -23,6 +23,6 @@ class Users(UsersBase):
 
 class UsersResponse(UsersBase):
     id: int
-    
+
     class Config:
         from_attributes = True

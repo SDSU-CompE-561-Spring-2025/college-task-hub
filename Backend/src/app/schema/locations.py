@@ -16,4 +16,3 @@ class LocationsResponse(LocationsBase):
 
     class Config:
         from_attributes = True
-

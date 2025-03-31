@@ -10,7 +10,7 @@ class RatingsCreate(RatingsBase):
     pass
 
 class RatingsResponse(RatingsBase):
-    id: int 
+    id: int
 
     class Config:
         from_attributes = True

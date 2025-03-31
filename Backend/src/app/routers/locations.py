@@ -25,7 +25,7 @@ async def get_locations():
     """
     return {"message": "List of locations"}
 
-@router.put("/location")
+@router.put("/location/{location_id}")
 async def update_location(location_id: int, location_data: LocationCreate):
     """"
     Update a single location's information in the database.
@@ -35,7 +35,7 @@ async def update_location(location_id: int, location_data: LocationCreate):
     """
     return {"message": f"Location with ID {location_id} updated", "data": location_data}
 
-@router.delete("/location")
+@router.delete("/location/{location_id}")
 async def delete_location(location_id: int):
     """"
     Delete a single location from the database.

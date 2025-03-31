@@ -32,6 +32,7 @@ dependencies = [
     "pydantic>=2.10.6",
     "pydantic-settings>=2.8.1",
     "pyjwt>=2.9.0",
+    "pytest>=8.3.5",
     "python-dotenv>=1.0.1",
     "ruff>=0.9.9",
     "sqlalchemy>=2.0.38",
@@ -54,6 +55,7 @@ path = ".venv"
 [tool.hatch.envs.default.scripts]
 # Default environment scripts for development and database operations
 dev = "fastapi dev {args:src/app/main.py}"
+tests = "pytest {args:src/app/tests}"
 
 [tool.hatch.envs.types]
 installer = "uv"

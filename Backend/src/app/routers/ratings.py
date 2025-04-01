@@ -19,12 +19,13 @@ async def create_rating(rating_data: RatingCreate):
     return {"message": "Rating created", "Info": rating_data}
 
 @router.get("/rating/{rating_id}")
-async def get_ratings():
+async def get_ratings(rating_id: int):
     """
     Return a list of all current ratings in the database.
-    Returns: A list of ratings.
+    rating_id: int - The ID of the rating to retrieve.
+    Returns: A specific rating.
     """
-    return {"message": "List of ratings"}
+    return {"message": f"Rating with ID {rating_id} retrieved"}
 
 @router.put("/rating/{rating_id}")
 async def update_rating(rating_id: int, rating_data: RatingCreate):

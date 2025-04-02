@@ -1,41 +1,64 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
+from app.schema.locations import LocationsCreate, LocationsResponse
 
 router = APIRouter()
 
-# This is used as a placeholder until schema models are implemented
-class LocationCreate(BaseModel):
-    street: str
-    city: str
-
-@router.post("/location")
-async def create_location(location_data: LocationCreate):
+@router.post("/location",response_model=LocationsResponse)
+async def create_location(location_data: LocationsCreate):
     """"
     Create a new location and add it to the database.
     location_data: LocationCreate - The data for the new location.
     Returns: A success message indicating the location was created.
     """
-    return {"message": "Location created", "Info": location_data}
+    return LocationsResponse(
+        id = 1,  # Placeholder 
+        street = location_data.street,
+        city = location_data.city,
+        state = location_data.state,
+        zipcode = location_data.zipcode
+    )
 
-@router.get("/location")
+@router.get("/location",response_model=list[LocationsResponse])
 async def get_locations():
     """"
     Return a list of all current locations in the database.
     Returns: A list of locations.
     """
-    return {"message": "List of locations"}
+    return [
+        LocationsResponse(
+            id=1,  # Placeholder ID
+            street="39177 College Ave",
+            city="San Diego",
+            state="CA",
+            zipcode= 92115
+        ),
+        LocationsResponse(
+            id=2,  # Placeholder ID
+            street="1230 Montezuma Rd",
+            city="San Diego",
+            state="CA",
+            zipcode= 12345
+        )
+    ]
+    
 
-@router.put("/location/{location_id}")
-async def update_location(location_id: int, location_data: LocationCreate):
+@router.put("/location/{location_id}",response_model=LocationsResponse)
+async def update_location(location_id: int, location_data: LocationsCreate):
     """"
     Update a single location's information in the database.
     location_id: int - The ID of the location to update.
     location_data: LocationCreate - The updated data for the location.
     Returns: A success message indicating the location was updated.
     """
-    return {"message": f"Location with ID {location_id} updated", "data": location_data}
+    return LocationsResponse(
+        id = location_id,
+        street=location_data.street,
+        city=location_data.city,
+        state=location_data.state,
+        zipcode=location_data.zipcode
+    )
 
-@router.delete("/location/{location_id}")
+@router.delete("/location/{location_id}",response_model=dict)
 async def delete_location(location_id: int):
     """"
     Delete a single location from the database.

@@ -1,0 +1,52 @@
+# crud/users.py
+from sqlalchemy.orm import Session
+from fastapi import HTTPException
+from app.models.users import Users
+from app.schema.users import UsersCreate
+
+
+# (Create) Create new user in the database
+def create_user(db: Session, user_data: UsersCreate):
+    db_user = Users(
+        name=user_data.name,
+        email=user_data.email,
+        password_hash=user_data.password,  # you'll want to hash this in the real app!
+        skills=user_data.skills,
+        roles=user_data.roles,
+        rating=user_data.rating,
+        phone_number=user_data.phone_number,
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+# (Read) Get all users from the database
+def get_user(db: Session, user_id: int):
+    user = db.query(Users).filter(Users.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+def get_users(db: Session):
+    return db.query(Users).all()
+
+# (Update) Update a user in the database
+def update_user(db: Session, user_id: int, user_data: UsersCreate):
+    user = get_user(db, user_id)
+    for field, value in user_data.dict().items():
+        if field == "password":
+            setattr(user, "password_hash", value)
+        else:
+            setattr(user, field, value)
+    db.commit()
+    db.refresh(user)
+    return user
+
+# (Delete) Delete a user from the database
+def delete_user(db: Session, user_id: int):
+    user = get_user(db, user_id)
+    db.delete(user)
+    db.commit()
+    return {"message": f"User with ID {user_id} deleted"}

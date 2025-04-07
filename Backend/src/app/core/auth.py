@@ -3,6 +3,10 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, UTC
 import jwt
+from app.schema.token import TokenData
+from fastapi import HTTPException
+from starlette.status import HTTP_401_UNAUTHORIZED
+from jwt import InvalidTokenError
 
 
 SECRET_KEY = settings.SECRET_KEY
@@ -25,3 +29,16 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+
+def decode_access_token(token: str) -> TokenData:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        name = payload.get("sub")
+        if name is None:
+            raise HTTPException(
+                status_code=HTTP_401_UNAUTHORIZED, detail="Invalid token"
+            )
+        return TokenData(username=name)
+    except InvalidTokenError:
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Invalid token")

@@ -2,7 +2,12 @@ from app.schema.users import UsersCreate, UsersResponse
 from app.crud import users as crud_users
 from app.dependencies import get_db
 from fastapi import APIRouter, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from app.core.auth import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
+from app.schema.token import Token
+from fastapi import HTTPException, status
+from datetime import timedelta
 
 router = APIRouter()
 
@@ -14,6 +19,23 @@ async def create_user(user_data: UsersCreate,db: Session = Depends(get_db)):
     Returns: A success message indicating the user was created.
     """
     return crud_users.create_user(db=db, user_data=user_data)
+
+@router.post("/user/token", response_model=Token)
+async def login_for_access_token( form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db) ):
+
+    user = crud_users.authenticate_user(db, name=form_data.username, password=form_data.password)
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(data={"sub": user.name}, expires_delta=access_token_expires)
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/user",response_model=list[UsersResponse])
 async def get_users(db: Session = Depends(get_db)):

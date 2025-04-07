@@ -3,14 +3,18 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.users import Users
 from app.schema.users import UsersCreate
+from app.core.security import verify_password
+from app.core.auth import get_password_hash
 
 
 # (Create) Create new user in the database
 def create_user(db: Session, user_data: UsersCreate):
+    hashed_pass = get_password_hash(user_data.password)
+    
     db_user = Users(
         name=user_data.name,
         email=user_data.email,
-        password_hash=user_data.password,  # you'll want to hash this in the real app!
+        password_hash=hashed_pass,  # you'll want to hash this in the real app!
         skills=user_data.skills,
         roles=user_data.roles,
         rating=user_data.rating,
@@ -21,6 +25,13 @@ def create_user(db: Session, user_data: UsersCreate):
     db.refresh(db_user)
     return db_user
 
+def authenticate_user(db: Session, name: str, password: str):
+    user = db.query(Users).filter(Users.name == name).first()
+    if not user:
+        return False
+    if not verify_password(password, user.password_hash):
+        return False
+    return user
 
 # (Read) Get all users from the database
 def get_user(db: Session, user_id: int):

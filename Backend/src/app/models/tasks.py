@@ -1,7 +1,7 @@
 from app.core.database import Base
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-import datetime
+from datetime import UTC, datetime
 
 class Tasks(Base):
     '''
@@ -14,7 +14,7 @@ class Tasks(Base):
     description = Column(String, index=True, nullable=False)
     status = Column(String, index=True, nullable=True)
     price = Column(Integer, index=True, nullable=False)
-    created_at = Column(DateTime, index=True, nullable=False, default=datetime.datetime.now)
+    created_at = Column(DateTime, index=True, nullable=False, default=datetime.now(UTC))
 
     # Foreign keys
     user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)

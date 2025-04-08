@@ -7,6 +7,8 @@ class TasksBase(BaseModel):
     status: str | None = None
     price: int
     created_at: datetime
+    user_id: int
+    location_id: int
 
 class TasksCreate(TasksBase):
     pass

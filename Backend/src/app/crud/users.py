@@ -14,7 +14,7 @@ def create_user(db: Session, user_data: UsersCreate):
     db_user = Users(
         name=user_data.name,
         email=user_data.email,
-        password_hash=hashed_pass,  # you'll want to hash this in the real app!
+        password_hash=hashed_pass, 
         skills=user_data.skills,
         roles=user_data.roles,
         rating=user_data.rating,

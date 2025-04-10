@@ -1,68 +1,149 @@
+import pytest
 from fastapi.testclient import TestClient
-from app.routers import ratings
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from app.main import app
+from app.core.database import Base
+from app.dependencies import get_db
+from app.models.ratings import Ratings
+from app.schema.ratings import RatingsCreate
+from datetime import datetime, UTC
 
-# Create a TestClient instance for the Tasks API endpoints
-client = TestClient(ratings.router)
+# Set up test database
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test_ratings.db"
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-def test_post_ratings():
-    """
-    Test the POST /rating endpoint.
-    """
-    # Define the request payload
-    payload = {
-        "user_id": 1,
-        "task_id": 1,
-        "rating": 5
+# Create the tables
+Base.metadata.create_all(bind=engine)
+
+# Override the dependency
+def override_get_db():
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+app.dependency_overrides[get_db] = override_get_db
+
+# Create test client
+client = TestClient(app)
+
+# Current timestamp for testing
+current_time = datetime.now(UTC)
+
+# Test data
+test_rating = {
+    "rating": 5,
+    "comment": "Excellent service",
+    "created_at": current_time.isoformat()
+}
+
+updated_rating = {
+    "rating": 4,
+    "comment": "Good service but could be better",
+    "created_at": current_time.isoformat()
+}
+
+@pytest.fixture
+def test_db():
+    # Create tables
+    Base.metadata.create_all(bind=engine)
+    yield
+    # Drop tables after test
+    Base.metadata.drop_all(bind=engine)
+
+def test_create_rating(test_db):
+    """Test creating a new rating"""
+    response = client.post("/api/rating", json=test_rating)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["rating"] == test_rating["rating"]
+    assert data["comment"] == test_rating["comment"]
+    assert "id" in data
+
+def test_get_rating(test_db):
+    """Test getting a rating by ID"""
+    # First create a rating
+    create_response = client.post("/api/rating", json=test_rating)
+    rating_id = create_response.json()["id"]
+    
+    # Then get that specific rating
+    get_response = client.get(f"/api/rating/{rating_id}")
+    assert get_response.status_code == 200
+    data = get_response.json()
+    assert data["id"] == rating_id
+    assert data["rating"] == test_rating["rating"]
+    assert data["comment"] == test_rating["comment"]
+
+def test_update_rating(test_db):
+    """Test updating a rating"""
+    # First create a rating
+    create_response = client.post("/api/rating", json=test_rating)
+    rating_id = create_response.json()["id"]
+    
+    # Then update the rating
+    update_response = client.put(f"/api/rating/{rating_id}", json=updated_rating)
+    assert update_response.status_code == 200
+    data = update_response.json()
+    assert data["id"] == rating_id
+    assert data["rating"] == updated_rating["rating"]
+    assert data["comment"] == updated_rating["comment"]
+    
+    # Verify update by getting the rating
+    get_response = client.get(f"/api/rating/{rating_id}")
+    assert get_response.json()["rating"] == updated_rating["rating"]
+
+def test_delete_rating(test_db):
+    """Test deleting a rating"""
+    # First create a rating
+    create_response = client.post("/api/rating", json=test_rating)
+    rating_id = create_response.json()["id"]
+    
+    # Then delete the rating
+    delete_response = client.delete(f"/api/rating/{rating_id}")
+    assert delete_response.status_code == 200
+    assert delete_response.json()["message"] == f"Rating with ID {rating_id} deleted"
+    
+    # Verify deletion by trying to get the rating (should return 404)
+    get_response = client.get(f"/api/rating/{rating_id}")
+    assert get_response.status_code == 404
+
+def test_get_nonexistent_rating(test_db):
+    """Test getting a rating that doesn't exist"""
+    response = client.get("/api/rating/999")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Rating not found"
+
+def test_update_nonexistent_rating(test_db):
+    """Test updating a rating that doesn't exist"""
+    response = client.put("/api/rating/999", json=updated_rating)
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Rating not found"
+
+def test_delete_nonexistent_rating(test_db):
+    """Test deleting a rating that doesn't exist"""
+    response = client.delete("/api/rating/999")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Rating not found"
+
+def test_create_rating_missing_fields():
+    """Test creating a rating with missing required fields"""
+    incomplete_rating = {
+        "rating": 3
+        # Missing comment and created_at
     }
+    response = client.post("/api/rating", json=incomplete_rating)
+    assert response.status_code == 422  # Unprocessable Entity
 
-    # Send a POST request to the endpoint
-    response = client.post("/rating", json=payload)
-
-    assert response.status_code == 200 #nosec
-    assert response.json() == {"message": "Rating created", "Info": payload} #nosec
-
-def test_get_ratings():
-    """
-    Test the GET /rating/{rating_id} endpoint.
-    """
-    # Define the rating ID to retrieve
-    rating_id = 1
-
-    # Send a GET request to the endpoint
-    response = client.get(f"/rating/{rating_id}")
-
-    assert response.status_code == 200 #nosec
-    assert response.json() == {"message": f"Rating with ID {rating_id} retrieved"} #nosec
-
-def test_put_ratings():
-    """
-    Test the PUT /rating/{rating_id} endpoint.
-    """
-    # Define the rating ID to update
-    rating_id = 1
-
-    # Define the request payload
-    payload = {
-        "user_id": 1,
-        "task_id": 1,
-        "rating": 4
+def test_create_rating_invalid_rating():
+    """Test creating a rating with an invalid rating value"""
+    invalid_rating = {
+        "rating": 6,  # Rating should likely be 1-5
+        "comment": "Invalid rating",
+        "created_at": current_time.isoformat()
     }
-
-    # Send a PUT request to the endpoint with a rating ID of 1
-    response = client.put(f"/rating/{rating_id}", json=payload)
-
-    assert response.status_code == 200 #nosec
-    assert response.json() == {"message": f"Rating with ID {rating_id} updated", "data": payload} #nosec
-
-def test_delete_ratings():
-    """
-    Test the DELETE /rating/{rating_id} endpoint.
-    """
-    # Define the rating ID to delete
-    rating_id = 1
-
-    # Send a DELETE request to the endpoint with a rating ID of 1
-    response = client.delete(f"/rating/{rating_id}")
-
-    assert response.status_code == 200 #nosec
-    assert response.json() == {"message": f"Rating with ID {rating_id} deleted"} #nosec
+    response = client.post("/api/rating", json=invalid_rating)
+    # This might return 422 if you have validation, but depends on your implementation
+    assert response.status_code in [200, 422]

@@ -36,6 +36,7 @@ dependencies = [
     "python-dotenv>=1.0.1",
     "ruff>=0.9.9",
     "sqlalchemy>=2.0.38",
+    "uvicorn>=0.34.0",
 ]
 
 [project.urls]

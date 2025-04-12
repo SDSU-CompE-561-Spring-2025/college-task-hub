@@ -1,10 +1,24 @@
 from fastapi import FastAPI
 from app.core.database import Base, engine
 from app.routers import users, locations, tasks, notifications, ratings
+from fastapi.middleware.cors import CORSMiddleware
 
 Base.metadata.create_all(bind=engine) # Create tables
 
 app = FastAPI() # Create app
+
+# Configure CORS
+origins = [
+    "http://localhost:3000",  # Development frontend
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins, # List of allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],   # Allow all HTTPS methods
+    allow_headers=["*"], # Allow all headers
+)
 
 # Include routers
 app.include_router(users.router, prefix="/api", tags=["users"])

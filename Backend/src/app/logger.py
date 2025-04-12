@@ -6,8 +6,10 @@ logger = logging.getLogger()
 
 # formats
 formatter = logging.Formatter(
-    fmt="%(message)"
+    fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
 )
+
 
 # output handlers
 stream_handler = logging.StreamHandler(sys.stdout)

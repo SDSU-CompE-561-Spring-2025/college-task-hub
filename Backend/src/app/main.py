@@ -2,10 +2,15 @@ from fastapi import FastAPI
 from app.core.database import Base, engine
 from app.routers import users, locations, tasks, notifications, ratings
 from fastapi.middleware.cors import CORSMiddleware
+from app.middleware.logger import logger
+from app.middleware.logging_middleware import LoggingMiddleware
 
 Base.metadata.create_all(bind=engine) # Create tables
 
 app = FastAPI() # Create app
+app.add_middleware(LoggingMiddleware) # Add our logging middleware
+
+logger.info('Starting API server...')
 
 # Configure CORS
 origins = [

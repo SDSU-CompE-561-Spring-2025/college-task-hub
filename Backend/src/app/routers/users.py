@@ -8,6 +8,7 @@ from app.core.auth import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
 from app.schema.token import Token
 from fastapi import HTTPException, status
 from datetime import timedelta
+from app.logger import logger
 
 router = APIRouter()
 
@@ -18,6 +19,7 @@ async def create_user(user_data: UsersCreate,db: Session = Depends(get_db)):
     user_data: UserCreate - The data for the new user.
     Returns: A success message indicating the user was created.
     """
+    logger.info('Creating new user')
     return crud_users.create_user(db=db, user_data=user_data)
 
 @router.post("/user/token", response_model=Token)
@@ -35,6 +37,7 @@ async def login_for_access_token( form_data: OAuth2PasswordRequestForm = Depends
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data={"sub": user.name}, expires_delta=access_token_expires)
 
+    logger.info('Checking access token')
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/user",response_model=list[UsersResponse])
@@ -43,6 +46,7 @@ async def get_users(db: Session = Depends(get_db)):
     Return a list of all current users in the database.
     Returns: A list of users.
     """
+    logger.info('Requesting list of users')
     return crud_users.get_users(db=db)
 
 @router.put("/user/{user_id}",response_model=UsersResponse)
@@ -53,6 +57,7 @@ async def update_user(user_id: int, user_data: UsersCreate,db: Session = Depends
     user_data: UserCreate - The updated data for the user.
     Returns: A success message indicating the user was updated.
     """
+    logger.info('Updating user')
     return crud_users.update_user(db=db, user_id=user_id, user_data=user_data)
 
 @router.delete("/user/{user_id}",response_model=dict)
@@ -62,4 +67,5 @@ async def delete_user(user_id: int, db: Session = Depends(get_db)):
     user_id: int - The ID of the user to delete.
     Returns: A success message indicating the user was deleted.
     """
+    logger.info('Deleting user')
     return crud_users.delete_user(db=db, user_id=user_id)

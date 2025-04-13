@@ -3,7 +3,7 @@ from app.crud import locations as crud_locations
 from app.dependencies import get_db
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.logger import logger
+from app.middleware.logger import logger
 
 
 router = APIRouter()

@@ -8,7 +8,7 @@ from app.core.auth import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
 from app.schema.token import Token
 from fastapi import HTTPException, status
 from datetime import timedelta
-from app.logger import logger
+from app.middleware.logger import logger
 
 router = APIRouter()
 

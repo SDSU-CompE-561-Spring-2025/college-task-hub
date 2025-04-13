@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from app.core.database import Base, engine
 from app.routers import users, locations, tasks, notifications, ratings
 from fastapi.middleware.cors import CORSMiddleware
-from app.logger import logger
-from app.logging_middleware import LoggingMiddleware
+from app.middleware.logger import logger
+from app.middleware.logging_middleware import LoggingMiddleware
 
 Base.metadata.create_all(bind=engine) # Create tables
 

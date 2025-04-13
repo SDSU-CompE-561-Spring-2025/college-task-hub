@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.schema.ratings import RatingsCreate, RatingsResponse
 from app.crud import ratings as crud_ratings
-from app.logger import logger
+from app.middleware.logger import logger
 
 router = APIRouter()
 

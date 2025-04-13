@@ -1,6 +1,6 @@
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi import Request
-from app.logger import logger
+from app.middleware.logger import logger
 
 class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):

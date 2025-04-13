@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.schema.notifications import NotificationsCreate, NotificationsResponse
 from app.crud import notifications as crud_notifications
-from app.logger import logger
+from app.middleware.logger import logger
 
 router = APIRouter()
 

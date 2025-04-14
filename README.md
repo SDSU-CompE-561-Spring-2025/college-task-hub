@@ -18,6 +18,7 @@ To deploy this project, install hatch, clone the repo, and run the development s
 pip install hatch
 git clone https://github.com/SDSU-CompE-561-Spring-2025/college-task-hub.git
 cd Backend
+hatch shell
 hatch run dev
 ```
 
@@ -27,6 +28,7 @@ To run units tests:
 
 ```bash
 cd Backend
+hatch shell
 hatch run tests
 ```
 
@@ -34,7 +36,7 @@ hatch run tests
 
 - 🐍 Python 3.11+
 - ⚡ FastAPI - Backend framework
-- 🐘 PostgreSQL (sqlalchemy)
+- 🐘 SQLite (sqlalchemy)
 - ✉️ Pydantic for data validation
 - 🧪 Hatch for environment management
 

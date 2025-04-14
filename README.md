@@ -21,6 +21,15 @@ cd Backend
 hatch run dev
 ```
 
+## Unit Tests
+
+To run units tests:
+
+```bash
+cd Backend
+hatch run tests
+```
+
 ## Software and Frameworks Used
 
 - 🐍 Python 3.11+

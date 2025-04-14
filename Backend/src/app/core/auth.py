@@ -4,9 +4,12 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta, UTC
 import jwt
 from app.schema.token import TokenData
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 from starlette.status import HTTP_401_UNAUTHORIZED
 from jwt import InvalidTokenError
+from sqlalchemy.orm import Session
+from app.crud import users as crud_users
+from app.dependencies import get_db
 
 
 SECRET_KEY = settings.SECRET_KEY
@@ -42,3 +45,23 @@ def decode_access_token(token: str) -> TokenData:
         return TokenData(username=name)
     except InvalidTokenError:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+        token_data = TokenData(username=username)
+    except InvalidTokenError:
+        raise credentials_exception
+    user = crud_users.get_user_by_username(db, username=token_data.username)
+    if user is None:
+        raise credentials_exception
+    return user

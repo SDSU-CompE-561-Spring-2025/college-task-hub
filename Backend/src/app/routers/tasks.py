@@ -4,11 +4,13 @@ from app.dependencies import get_db
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.middleware.logger import logger
+from app.core.auth import get_current_user
+from app.models.users import Users
 
 router = APIRouter()
 
 @router.post("/task",response_model=TasksResponse)
-async def create_task(task_data: TasksCreate, db: Session = Depends(get_db)):
+async def create_task(task_data: TasksCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     """
     Create a new task and add it to the database.
     task_data: TaskCreate - The data for the new task.
@@ -18,7 +20,7 @@ async def create_task(task_data: TasksCreate, db: Session = Depends(get_db)):
     return crud_tasks.create_task(db=db, task_data=task_data)
 
 @router.get("/task",response_model=list[TasksResponse])
-async def get_tasks(db: Session = Depends(get_db)):
+async def get_tasks(db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     """
     Return a list of all current tasks in the database.
     Returns: A list of tasks.
@@ -27,7 +29,7 @@ async def get_tasks(db: Session = Depends(get_db)):
     return crud_tasks.get_tasks(db=db)
 
 @router.get("/task/{task_id}", response_model=TasksResponse)
-async def get_task(task_id: int, db: Session = Depends(get_db)):
+async def get_task(task_id: int, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     """
     Return a single task from the database by its ID.
     task_id: int - The ID of the task to retrieve.
@@ -37,7 +39,7 @@ async def get_task(task_id: int, db: Session = Depends(get_db)):
     return crud_tasks.get_task(db=db, task_id=task_id)
 
 @router.put("/task/{task_id}",response_model=TasksResponse)
-async def update_task(task_id: int, task_data: TasksCreate, db: Session = Depends(get_db)):
+async def update_task(task_id: int, task_data: TasksCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     """
     Update a single task's information in the database.
     task_id: int - The ID of the task to update.
@@ -48,7 +50,7 @@ async def update_task(task_id: int, task_data: TasksCreate, db: Session = Depend
     return crud_tasks.update_task(db=db, task_id=task_id, task_data=task_data)
     
 @router.delete("/task/{task_id}",response_model=dict)
-async def delete_task(task_id: int,db: Session = Depends(get_db)):
+async def delete_task(task_id: int, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     """
     Delete a single task from the database.
     task_id: int - The ID of the task to delete.

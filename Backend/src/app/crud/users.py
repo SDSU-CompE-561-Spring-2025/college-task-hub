@@ -61,3 +61,6 @@ def delete_user(db: Session, user_id: int):
     db.delete(user)
     db.commit()
     return {"message": f"User with ID {user_id} deleted"}
+
+def get_user_by_username(db: Session, username: str):
+    return db.query(Users).filter(Users.name == username).first()

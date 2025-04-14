@@ -17,7 +17,17 @@ To deploy this project, install hatch, clone the repo, and run the development s
 ```bash
 pip install hatch
 git clone https://github.com/SDSU-CompE-561-Spring-2025/college-task-hub.git
+cd Backend
 hatch run dev
+```
+
+## Unit Tests
+
+To run units tests:
+
+```bash
+cd Backend
+hatch run tests
 ```
 
 ## Software and Frameworks Used

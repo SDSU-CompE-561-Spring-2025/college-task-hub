@@ -26,6 +26,16 @@ async def get_locations(db: Session = Depends(get_db)):
     """
     logger.info('Requesting location')
     return crud_locations.get_locations(db=db)
+
+@router.get("/location/{location_id}", response_model=LocationsResponse)
+async def get_location(location_id: int, db: Session = Depends(get_db)):
+    """"
+    Return a single location by its ID.
+    location_id: int - The ID of the location to retrieve.
+    Returns: The location if found, otherwise raises a 404 error.
+    """
+    logger.info('Requesting location by ID')
+    return crud_locations.get_location(db=db, location_id=location_id)
     
 @router.put("/location/{location_id}",response_model=LocationsResponse)
 async def update_location(location_id: int, location_data: LocationsCreate,db: Session = Depends(get_db)):

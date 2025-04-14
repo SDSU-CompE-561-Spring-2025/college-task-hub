@@ -9,26 +9,38 @@ from app.models.users import Users
 from app.schema.users import UsersCreate
 from fastapi.security import OAuth2PasswordRequestForm
 
-# Set up test database
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test_users.db"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Create the tables
-Base.metadata.create_all(bind=engine)
-
-# Override the dependency
-def override_get_db():
+@pytest.fixture(scope="function")
+def db():
+    # Create all tables
+    Base.metadata.create_all(bind=engine)
     db = TestingSessionLocal()
     try:
         yield db
     finally:
         db.close()
+        # Drop all tables after test
+        Base.metadata.drop_all(bind=engine)
 
-app.dependency_overrides[get_db] = override_get_db
-
-# Create test client
-client = TestClient(app)
+@pytest.fixture(scope="function")
+def client(db):
+    # Override the dependency
+    def override_get_db():
+        try:
+            yield db
+        finally:
+            pass
+    
+    app.dependency_overrides[get_db] = override_get_db
+    with TestClient(app) as test_client:
+        yield test_client
+    app.dependency_overrides.clear()
 
 # Test data
 test_user = {
@@ -56,15 +68,7 @@ login_data = {
     "password": "password123"
 }
 
-@pytest.fixture
-def test_db():
-    # Create tables
-    Base.metadata.create_all(bind=engine)
-    yield
-    # Drop tables after test
-    Base.metadata.drop_all(bind=engine)
-
-def test_create_user(test_db):
+def test_create_user(client, db):
     """Test creating a new user"""
     response = client.post("/api/user", json=test_user)
     assert response.status_code == 200
@@ -78,7 +82,7 @@ def test_create_user(test_db):
     assert "id" in data
     assert "password" not in data  # Ensure password is not returned in response
 
-def test_user_login(test_db):
+def test_user_login(client, db):
     """Test user login and token generation"""
     # First create a user
     client.post("/api/user", json=test_user)
@@ -93,7 +97,7 @@ def test_user_login(test_db):
     assert "access_token" in data
     assert data["token_type"] == "bearer"
 
-def test_failed_login(test_db):
+def test_failed_login(client, db):
     """Test login with incorrect credentials"""
     # First create a user
     client.post("/api/user", json=test_user)
@@ -106,7 +110,7 @@ def test_failed_login(test_db):
     assert response.status_code == 401
     assert "detail" in response.json()
 
-def test_get_users(test_db):
+def test_get_users(client, db):
     """Test getting all users"""
     # First create a user
     client.post("/api/user", json=test_user)
@@ -120,7 +124,7 @@ def test_get_users(test_db):
     assert data[0]["name"] == test_user["name"]
     assert data[0]["email"] == test_user["email"]
 
-def test_update_user(test_db):
+def test_update_user(client, db):
     """Test updating a user"""
     # First create a user
     create_response = client.post("/api/user", json=test_user)
@@ -138,7 +142,7 @@ def test_update_user(test_db):
     assert data["rating"] == updated_user["rating"]
     assert data["phone_number"] == updated_user["phone_number"]
 
-def test_delete_user(test_db):
+def test_delete_user(client, db):
     """Test deleting a user"""
     # First create a user
     create_response = client.post("/api/user", json=test_user)
@@ -153,19 +157,19 @@ def test_delete_user(test_db):
     get_response = client.get("/api/user")
     assert len(get_response.json()) == 0
 
-def test_update_nonexistent_user(test_db):
+def test_update_nonexistent_user(client, db):
     """Test updating a user that doesn't exist"""
     response = client.put("/api/user/999", json=updated_user)
     assert response.status_code == 404
     assert response.json()["detail"] == "User not found"
 
-def test_delete_nonexistent_user(test_db):
+def test_delete_nonexistent_user(client, db):
     """Test deleting a user that doesn't exist"""
     response = client.delete("/api/user/999")
     assert response.status_code == 404
     assert response.json()["detail"] == "User not found"
 
-def test_create_user_missing_fields():
+def test_create_user_missing_fields(client, db):
     """Test creating a user with missing required fields"""
     incomplete_user = {
         "name": "incomplete",
@@ -175,14 +179,14 @@ def test_create_user_missing_fields():
     response = client.post("/api/user", json=incomplete_user)
     assert response.status_code == 422  # Unprocessable Entity
 
-def test_create_user_invalid_email():
+def test_create_user_invalid_email(client, db):
     """Test creating a user with an invalid email"""
     invalid_user = test_user.copy()
     invalid_user["email"] = "not-an-email"
     response = client.post("/api/user", json=invalid_user)
     assert response.status_code == 422  # Unprocessable Entity
 
-def test_create_user_password_too_short():
+def test_create_user_password_too_short(client, db):
     """Test creating a user with a password that's too short"""
     invalid_user = test_user.copy()
     invalid_user["password"] = "short"

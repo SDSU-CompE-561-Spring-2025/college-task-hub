@@ -49,6 +49,16 @@ async def get_users(db: Session = Depends(get_db)):
     logger.info('Requesting list of users')
     return crud_users.get_users(db=db)
 
+@router.get("/user/{user_id}", response_model=UsersResponse)
+async def get_user(user_id: int, db: Session = Depends(get_db)):
+    """"
+    Return a single user by their ID.
+    user_id: int - The ID of the user to retrieve.
+    Returns: The user if found, otherwise raises a 404 error.
+    """
+    logger.info('Requesting user by ID')
+    return crud_users.get_user(db=db, user_id=user_id)
+
 @router.put("/user/{user_id}",response_model=UsersResponse)
 async def update_user(user_id: int, user_data: UsersCreate,db: Session = Depends(get_db)):
     """"

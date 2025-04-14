@@ -2,7 +2,7 @@ import logging
 import sys
 
 # make logger instance
-logger = logging.getLogger()
+logger = logging.getLogger('my_app')
 
 # formats
 formatter = logging.Formatter(

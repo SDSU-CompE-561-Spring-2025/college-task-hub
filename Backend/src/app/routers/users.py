@@ -4,16 +4,17 @@ from app.dependencies import get_db
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from app.core.auth import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
+from app.core.auth import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, get_current_user
 from app.schema.token import Token
 from fastapi import HTTPException, status
 from datetime import timedelta
 from app.middleware.logger import logger
+from app.models.users import Users
 
 router = APIRouter()
 
 @router.post("/user", response_model=UsersResponse)
-async def create_user(user_data: UsersCreate,db: Session = Depends(get_db)):
+async def create_user(user_data: UsersCreate, db: Session = Depends(get_db)):
     """"
     Create a new user and add it to the database.
     user_data: UserCreate - The data for the new user.
@@ -23,8 +24,7 @@ async def create_user(user_data: UsersCreate,db: Session = Depends(get_db)):
     return crud_users.create_user(db=db, user_data=user_data)
 
 @router.post("/user/token", response_model=Token)
-async def login_for_access_token( form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db) ):
-
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = crud_users.authenticate_user(db, name=form_data.username, password=form_data.password)
     
     if not user:
@@ -41,7 +41,7 @@ async def login_for_access_token( form_data: OAuth2PasswordRequestForm = Depends
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/user",response_model=list[UsersResponse])
-async def get_users(db: Session = Depends(get_db)):
+async def get_users(db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     """"
     Return a list of all current users in the database.
     Returns: A list of users.
@@ -50,7 +50,7 @@ async def get_users(db: Session = Depends(get_db)):
     return crud_users.get_users(db=db)
 
 @router.get("/user/{user_id}", response_model=UsersResponse)
-async def get_user(user_id: int, db: Session = Depends(get_db)):
+async def get_user(user_id: int, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     """"
     Return a single user by their ID.
     user_id: int - The ID of the user to retrieve.
@@ -60,7 +60,7 @@ async def get_user(user_id: int, db: Session = Depends(get_db)):
     return crud_users.get_user(db=db, user_id=user_id)
 
 @router.put("/user/{user_id}",response_model=UsersResponse)
-async def update_user(user_id: int, user_data: UsersCreate,db: Session = Depends(get_db)):
+async def update_user(user_id: int, user_data: UsersCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     """"
     Update a single user's information in the database.
     user_id: int - The ID of the user to update.
@@ -71,7 +71,7 @@ async def update_user(user_id: int, user_data: UsersCreate,db: Session = Depends
     return crud_users.update_user(db=db, user_id=user_id, user_data=user_data)
 
 @router.delete("/user/{user_id}",response_model=dict)
-async def delete_user(user_id: int, db: Session = Depends(get_db)):
+async def delete_user(user_id: int, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     """"
     Delete a single user from the database.
     user_id: int - The ID of the user to delete.

@@ -3,7 +3,29 @@ from app.models.tasks import Tasks
 from app.schema.tasks import TasksCreate
 from datetime import datetime
 
+def get_auth_token(client):
+    """Helper function to get auth token"""
+    # First create a user if not exists
+    user_data = {
+        "name": "testuser",
+        "email": "test@example.com",
+        "password": "testpassword123",
+        "skills": "Python, FastAPI",
+        "roles": "student",
+        "rating": 4,
+        "phone_number": "1234567890"
+    }
+    client.post("/api/user", json=user_data)
+    
+    # Then get token
+    response = client.post(
+        "/api/user/token",
+        data={"username": user_data["name"], "password": user_data["password"]}
+    )
+    return response.json()["access_token"]
+
 def test_create_task(client, db: Session):
+    token = get_auth_token(client)
     task_data = {
         "title": "Test Task",
         "description": "This is a test task",
@@ -13,7 +35,11 @@ def test_create_task(client, db: Session):
         "user_id": 1,
         "location_id": 1
     }
-    response = client.post("/api/task", json=task_data)
+    response = client.post(
+        "/api/task", 
+        json=task_data,
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 200
     data = response.json()
     assert data["title"] == task_data["title"]
@@ -23,6 +49,7 @@ def test_create_task(client, db: Session):
     assert "id" in data
 
 def test_get_task(client, db: Session):
+    token = get_auth_token(client)
     # First create a task
     task_data = {
         "title": "Test Task",
@@ -33,11 +60,18 @@ def test_get_task(client, db: Session):
         "user_id": 1,
         "location_id": 1
     }
-    response = client.post("/api/task", json=task_data)
+    response = client.post(
+        "/api/task", 
+        json=task_data,
+        headers={"Authorization": f"Bearer {token}"}
+    )
     task_id = response.json()["id"]
 
     # Then get it
-    response = client.get(f"/api/task/{task_id}")
+    response = client.get(
+        f"/api/task/{task_id}",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 200
     data = response.json()
     assert data["title"] == task_data["title"]
@@ -46,6 +80,7 @@ def test_get_task(client, db: Session):
     assert data["price"] == task_data["price"]
 
 def test_get_tasks(client, db: Session):
+    token = get_auth_token(client)
     # First create a task
     task_data = {
         "title": "Test Task",
@@ -56,10 +91,17 @@ def test_get_tasks(client, db: Session):
         "user_id": 1,
         "location_id": 1
     }
-    client.post("/api/task", json=task_data)
+    client.post(
+        "/api/task", 
+        json=task_data,
+        headers={"Authorization": f"Bearer {token}"}
+    )
 
     # Then get all tasks
-    response = client.get("/api/task")
+    response = client.get(
+        "/api/task",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
@@ -67,6 +109,7 @@ def test_get_tasks(client, db: Session):
     assert data[0]["title"] == task_data["title"]
 
 def test_update_task(client, db: Session):
+    token = get_auth_token(client)
     # First create a task
     task_data = {
         "title": "Test Task",
@@ -77,7 +120,11 @@ def test_update_task(client, db: Session):
         "user_id": 1,
         "location_id": 1
     }
-    response = client.post("/api/task", json=task_data)
+    response = client.post(
+        "/api/task", 
+        json=task_data,
+        headers={"Authorization": f"Bearer {token}"}
+    )
     task_id = response.json()["id"]
 
     # Then update it
@@ -90,7 +137,11 @@ def test_update_task(client, db: Session):
         "user_id": 1,
         "location_id": 1
     }
-    response = client.put(f"/api/task/{task_id}", json=update_data)
+    response = client.put(
+        f"/api/task/{task_id}", 
+        json=update_data,
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 200
     data = response.json()
     assert data["title"] == update_data["title"]
@@ -99,6 +150,7 @@ def test_update_task(client, db: Session):
     assert data["price"] == update_data["price"]
 
 def test_delete_task(client, db: Session):
+    token = get_auth_token(client)
     # First create a task
     task_data = {
         "title": "Test Task",
@@ -109,24 +161,39 @@ def test_delete_task(client, db: Session):
         "user_id": 1,
         "location_id": 1
     }
-    response = client.post("/api/task", json=task_data)
+    response = client.post(
+        "/api/task", 
+        json=task_data,
+        headers={"Authorization": f"Bearer {token}"}
+    )
     task_id = response.json()["id"]
 
     # Then delete it
-    response = client.delete(f"/api/task/{task_id}")
+    response = client.delete(
+        f"/api/task/{task_id}",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 200
     assert response.json()["message"] == f"Task with ID {task_id} deleted"
 
     # Verify deletion
-    response = client.get(f"/api/task/{task_id}")
+    response = client.get(
+        f"/api/task/{task_id}",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 404
 
 def test_get_nonexistent_task(client, db: Session):
-    response = client.get("/api/task/999")
+    token = get_auth_token(client)
+    response = client.get(
+        "/api/task/999",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 404
     assert response.json()["detail"] == "Task not found"
 
 def test_update_nonexistent_task(client, db: Session):
+    token = get_auth_token(client)
     update_data = {
         "title": "Updated Task",
         "description": "This is an updated task",
@@ -136,25 +203,39 @@ def test_update_nonexistent_task(client, db: Session):
         "user_id": 1,
         "location_id": 1
     }
-    response = client.put("/api/task/999", json=update_data)
+    response = client.put(
+        "/api/task/999", 
+        json=update_data,
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 404
     assert response.json()["detail"] == "Task not found"
 
 def test_delete_nonexistent_task(client, db: Session):
-    response = client.delete("/api/task/999")
+    token = get_auth_token(client)
+    response = client.delete(
+        "/api/task/999",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 404
     assert response.json()["detail"] == "Task not found"
 
 def test_create_task_missing_fields(client, db: Session):
+    token = get_auth_token(client)
     incomplete_task = {
         "title": "Incomplete Task",
         "description": "This task is missing fields"
         # Missing required fields: price, created_at, user_id, location_id
     }
-    response = client.post("/api/task", json=incomplete_task)
+    response = client.post(
+        "/api/task", 
+        json=incomplete_task,
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 422  # Unprocessable Entity
 
 def test_create_task_invalid_price(client, db: Session):
+    token = get_auth_token(client)
     invalid_task = {
         "title": "Invalid Task",
         "description": "This task has invalid price",
@@ -164,5 +245,9 @@ def test_create_task_invalid_price(client, db: Session):
         "user_id": 1,
         "location_id": 1
     }
-    response = client.post("/api/task", json=invalid_task)
+    response = client.post(
+        "/api/task", 
+        json=invalid_task,
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 422  # Unprocessable Entity

@@ -68,6 +68,18 @@ login_data = {
     "password": "password123"
 }
 
+def get_auth_token(client):
+    """Helper function to get auth token"""
+    # First create a user if not exists
+    client.post("/api/user", json=test_user)
+    
+    # Then get token
+    response = client.post(
+        "/api/user/token",
+        data={"username": test_user["name"], "password": test_user["password"]}
+    )
+    return response.json()["access_token"]
+
 def test_create_user(client, db):
     """Test creating a new user"""
     response = client.post("/api/user", json=test_user)
@@ -112,11 +124,13 @@ def test_failed_login(client, db):
 
 def test_get_users(client, db):
     """Test getting all users"""
-    # First create a user
-    client.post("/api/user", json=test_user)
+    token = get_auth_token(client)
     
     # Then get all users
-    response = client.get("/api/user")
+    response = client.get(
+        "/api/user",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
@@ -126,12 +140,21 @@ def test_get_users(client, db):
 
 def test_update_user(client, db):
     """Test updating a user"""
-    # First create a user
-    create_response = client.post("/api/user", json=test_user)
-    user_id = create_response.json()["id"]
+    token = get_auth_token(client)
+    
+    # Get the user ID
+    response = client.get(
+        "/api/user",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    user_id = response.json()[0]["id"]
     
     # Then update the user
-    update_response = client.put(f"/api/user/{user_id}", json=updated_user)
+    update_response = client.put(
+        f"/api/user/{user_id}",
+        json=updated_user,
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert update_response.status_code == 200
     data = update_response.json()
     assert data["id"] == user_id
@@ -144,28 +167,86 @@ def test_update_user(client, db):
 
 def test_delete_user(client, db):
     """Test deleting a user"""
-    # First create a user
-    create_response = client.post("/api/user", json=test_user)
-    user_id = create_response.json()["id"]
+    # Create first test user to delete
+    user_data1 = {
+        "name": "testuser1",
+        "email": "test1@example.com",
+        "password": "password123",
+        "skills": "Python, FastAPI",
+        "roles": "Developer",
+        "rating": 5,
+        "phone_number": "1234567890"
+    }
+    client.post("/api/user", json=user_data1)
     
-    # Then delete the user
-    delete_response = client.delete(f"/api/user/{user_id}")
+    # Get token for first user
+    response = client.post(
+        "/api/user/token",
+        data={"username": user_data1["name"], "password": user_data1["password"]}
+    )
+    token1 = response.json()["access_token"]
+    
+    # Get the user ID
+    response = client.get(
+        "/api/user",
+        headers={"Authorization": f"Bearer {token1}"}
+    )
+    user_id = response.json()[0]["id"]
+    
+    # Create second test user for verification with different phone number
+    user_data2 = {
+        "name": "testuser2",
+        "email": "test2@example.com",
+        "password": "password123",
+        "skills": "Python, FastAPI",
+        "roles": "Developer",
+        "rating": 5,
+        "phone_number": "0987654321"
+    }
+    client.post("/api/user", json=user_data2)
+    
+    # Get token for second user
+    response = client.post(
+        "/api/user/token",
+        data={"username": user_data2["name"], "password": user_data2["password"]}
+    )
+    token2 = response.json()["access_token"]
+    
+    # Then delete the first user
+    delete_response = client.delete(
+        f"/api/user/{user_id}",
+        headers={"Authorization": f"Bearer {token1}"}
+    )
     assert delete_response.status_code == 200
     assert delete_response.json()["message"] == f"User with ID {user_id} deleted"
     
-    # Verify deletion by trying to get all users (should be empty list)
-    get_response = client.get("/api/user")
-    assert len(get_response.json()) == 0
+    # Try to get the deleted user using the second user's token
+    get_response = client.get(
+        f"/api/user/{user_id}",
+        headers={"Authorization": f"Bearer {token2}"}
+    )
+    assert get_response.status_code == 404
 
 def test_update_nonexistent_user(client, db):
     """Test updating a user that doesn't exist"""
-    response = client.put("/api/user/999", json=updated_user)
+    token = get_auth_token(client)
+    
+    response = client.put(
+        "/api/user/999",
+        json=updated_user,
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 404
     assert response.json()["detail"] == "User not found"
 
 def test_delete_nonexistent_user(client, db):
     """Test deleting a user that doesn't exist"""
-    response = client.delete("/api/user/999")
+    token = get_auth_token(client)
+    
+    response = client.delete(
+        "/api/user/999",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 404
     assert response.json()["detail"] == "User not found"
 

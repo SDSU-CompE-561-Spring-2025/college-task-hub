@@ -36,7 +36,7 @@ hatch run tests
 
 - 🐍 Python 3.11+
 - ⚡ FastAPI - Backend framework
-- 🐘 PostgreSQL (sqlalchemy)
+- 🐘 SQLite (sqlalchemy)
 - ✉️ Pydantic for data validation
 - 🧪 Hatch for environment management
 

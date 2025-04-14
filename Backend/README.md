@@ -1,4 +1,4 @@
-# This is the backend structure of our project.
+# Backend Structure
 
 ```text
 Backend/

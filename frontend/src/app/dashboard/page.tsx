@@ -1,6 +1,21 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import Layout from '@/components/layout/layout';
+import Link from 'next/link';
 
-export default function ButtonDemo() {
-	return <Button variant="outline">Button</Button>;
+export default function ProfilePage() {
+	return (
+		<div>
+			<Layout>
+				<div className="flex flex-col items-center justify-center min-h-screen text-black">
+					<h1>Main Dashboard Page</h1>
+					<li>
+						<Link href="/dashboard/poster">Poster</Link>
+					</li>
+					<li>
+						<Link href="/dashboard/performer">Performer</Link>
+					</li>
+				</div>
+			</Layout>
+		</div>
+	);
 }

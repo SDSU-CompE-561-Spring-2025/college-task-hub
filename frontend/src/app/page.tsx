@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import React from 'react';
 import Layout from '@/components/layout/layout';
 
@@ -6,8 +8,17 @@ export default function Home() {
 		<div>
 			<Layout>
 				<div className="flex flex-col items-center justify-center min-h-screen text-black">
-					<h1 className="text-5xl font-bold mb-4">Welcome to TaskU</h1>
-					<p className="text-xl mb-8">Your task management solution.</p>
+					<h1> Home Page</h1>
+					<h2>
+						<Link href="/auth/sign-in">Sign in</Link>
+						<br />
+						<Link href="/auth/sign-up">Sign up</Link>
+						<br />
+						<Link href="/dashboard/poster">Post Tasks</Link>
+						<br />
+						<Link href="/dashboard/performer">Do Tasks</Link>
+						<br />
+					</h2>
 				</div>
 			</Layout>
 		</div>

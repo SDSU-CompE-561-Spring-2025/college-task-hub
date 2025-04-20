@@ -1,4 +1,7 @@
 import Link from 'next/link';
+import React from 'react';
+import Layout from '@/components/layout/layout';
+import CardInfo from '@/components/layout/taskCard';
 
 export default function Home() {
 	return (

@@ -5,7 +5,7 @@ import { ChevronRight } from 'lucide-react';
 
 const Header = () => {
 	return (
-		<header className="bg-sky-700 text-emerald-50 p-2">
+		<header className="bg-gradient-to-r from-sky-600 via-white-700 to-sky-600 text-emerald-50 p-4 shadow-md">
 			<nav className="w-full">
 				<div className="grid grid-cols-5 items-end">
 					{/* Home */}
@@ -37,7 +37,9 @@ const Header = () => {
 					</Button>
 
 					{/* Center Title */}
-					<span className="flex items-center justify-center text-7xl font-bold">TaskU</span>
+					<span className="flex items-center justify-center text-7xl font-bold drop-shadow-xl">
+						TaskU
+					</span>
 
 					{/* Tasks */}
 					<Button

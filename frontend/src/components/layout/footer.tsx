@@ -3,7 +3,7 @@ import { Hammer } from 'lucide-react';
 
 const Footer = () => {
 	return (
-		<footer className="flex flex-col bg-stone-800 text-emerald-50 p-4">
+		<footer className="flex flex-col bg-gradient-to-r from-slate-700 via-stone-800 to-slate-700 text-emerald-50 p-4">
 			<div className="flex items-center justify-center">
 				<Hammer
 					size={32}

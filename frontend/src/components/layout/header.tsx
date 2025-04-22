@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ChevronRight } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 const Header = () => {

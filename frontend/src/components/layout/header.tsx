@@ -25,7 +25,7 @@ const Header = () => {
 					{/* Dashboard */}
 					<Button
 						variant="link"
-						className={isActive('/dashboard') ? 'text-sky-900 underline' : 'text-white'}
+						className={isActive('/dashboard') ? 'text-white underline' : 'text-white'}
 					>
 						<Link
 							href="/dashboard"
@@ -38,7 +38,7 @@ const Header = () => {
 					{/* Tasks */}
 					<Button
 						variant="link"
-						className={isActive('/tasks') ? 'text-sky-900 underline' : 'text-white'}
+						className={isActive('/tasks') ? 'text-white underline' : 'text-white'}
 					>
 						<Link
 							href="/tasks"
@@ -51,7 +51,7 @@ const Header = () => {
 					{/* Profile */}
 					<Button
 						variant="link"
-						className={isActive('/profile') ? 'text-sky-900' : 'text-white'}
+						className={isActive('/profile') ? 'text-white underline' : 'text-white'}
 					>
 						<Link
 							href="/profile"

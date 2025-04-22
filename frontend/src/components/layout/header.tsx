@@ -1,56 +1,49 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 const Header = () => {
+	const pathname = usePathname();
+	const isActive = (href: string): boolean => pathname === href;
+
 	return (
-		<header className="bg-gradient-to-r from-sky-600 via-white-700 to-sky-600 text-emerald-50 p-4 shadow-md">
-			<nav className="w-full">
-				<div className="grid grid-cols-5 items-end">
-					{/* Home */}
-					<Button
-						variant="link"
-						className="w-full text-emerald-50"
+		<header className="bg-gradient-to-r from-sky-900 via-white-700 to-sky-600 text-white p-4 shadow-md">
+			<nav className="flex space-x-4">
+				<div className="space-x-8 items-end flex items-center justify-center text-xl">
+					{/* Home and Center Title */}
+					<Link
+						href="/"
+						className="text-white text-7xl font-bold drop-shadow-xl"
 					>
-						<Link
-							href="/"
-							className="flex items-center justify-center text-xl hover:text-white"
-						>
-							<ChevronRight />
-							Home
-						</Link>
-					</Button>
+						TaskU
+					</Link>
 
 					{/* Dashboard */}
 					<Button
 						variant="link"
-						className="w-full text-emerald-50"
+						className={isActive('/dashboard') ? 'text-sky-900 underline' : 'text-white'}
 					>
 						<Link
 							href="/dashboard"
-							className="flex items-center justify-center text-xl hover:text-white"
+							className="text-xl"
 						>
-							<ChevronRight />
 							Dashboard
 						</Link>
 					</Button>
 
-					{/* Center Title */}
-					<span className="flex items-center justify-center text-7xl font-bold drop-shadow-xl">
-						TaskU
-					</span>
-
 					{/* Tasks */}
 					<Button
 						variant="link"
-						className="w-full text-emerald-50"
+						className={isActive('/tasks') ? 'text-sky-900 underline' : 'text-white'}
 					>
 						<Link
 							href="/tasks"
-							className="flex items-center justify-center text-xl hover:text-white"
+							className="text-xl"
 						>
-							<ChevronRight />
 							Tasks
 						</Link>
 					</Button>
@@ -58,13 +51,12 @@ const Header = () => {
 					{/* Profile */}
 					<Button
 						variant="link"
-						className="w-full text-emerald-50"
+						className={isActive('/profile') ? 'text-sky-900' : 'text-white'}
 					>
 						<Link
 							href="/profile"
-							className="flex items-center justify-center text-xl hover:text-white"
+							className="text-xl"
 						>
-							<ChevronRight />
 							Profile
 						</Link>
 					</Button>

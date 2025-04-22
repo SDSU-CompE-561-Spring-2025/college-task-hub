@@ -18,7 +18,7 @@ const SignUpCard = () => {
 			<CardHeader>
 				<CardTitle>Sign Up</CardTitle>
 				<CardDescription>
-					<Link href="/auth/sign-in">Already have an account? Sign in</Link>
+					<p> Create an account to get started.</p>
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
@@ -45,6 +45,12 @@ const SignUpCard = () => {
 				<Button variant="outline">Cancel</Button>
 				<Button>Sign Up</Button>
 			</CardFooter>
+			<Link
+				href="/auth/sign-in"
+				className="flex justify-center"
+			>
+				Already have an account? Sign in
+			</Link>
 		</Card>
 	);
 };

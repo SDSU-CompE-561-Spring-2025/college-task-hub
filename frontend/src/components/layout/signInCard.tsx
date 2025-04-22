@@ -16,11 +16,9 @@ const SignInCard = () => {
 	return (
 		<Card className="w-[350px]">
 			<CardHeader>
-				<CardTitle>Sign In</CardTitle>
+				<CardTitle className="text-xl font-bold">Login</CardTitle>
 				<CardDescription>
-					<Link href="/auth/sign-up">New to TaskU? Sign Up</Link>
-					<br />
-					<Link href="/auth/forgot-password">Forgot Password?</Link>
+					<p> Enter your information to log in to your account.</p>
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
@@ -30,11 +28,19 @@ const SignInCard = () => {
 							<Label htmlFor="name">Username</Label>
 							<Input
 								id="username"
-								placeholder="Username"
+								placeholder="Username or Email"
 							/>
 						</div>
 						<div className="flex flex-col space-y-1.5">
-							<Label htmlFor="name">Password</Label>
+							<Label htmlFor="name">
+								Password
+								<Link
+									href="/auth/forgot-password"
+									className="ml-auto"
+								>
+									Forgot Password?
+								</Link>
+							</Label>
 							<Input
 								id="password"
 								placeholder="Password"
@@ -47,6 +53,12 @@ const SignInCard = () => {
 				<Button variant="outline">Cancel</Button>
 				<Button>Sign In</Button>
 			</CardFooter>
+			<Link
+				href="/auth/sign-up"
+				className="flex justify-center"
+			>
+				Don't have an account? Sign Up
+			</Link>
 		</Card>
 	);
 };

@@ -10,30 +10,57 @@ const Header = () => {
 	const isActive = (href: string): boolean => pathname === href;
 
 	return (
-		<header className="bg-sky-500 text-white p-4 shadow-md relative h-[250px] flex flex-col items-center justify-center">
-			{/* sign in and sign up buttons */}
-			<div className="absolute top-4 right-4 space-x-4">
-				<Link href="/signin">
-					<Button className="bg-sky-600 hover:bg-sky-700 text-white rounded-lg px-4 text-lg font-semibold hover:cursor-pointer">
-						Sign In
-					</Button>
-				</Link>
-				<Link href="/signup">
-					<Button className="bg-white text-sky-600 hover:bg-gray-100 rounded-lg px-4 text-lg font-semibold hover:cursor-pointer">
-						Sign Up
-					</Button>
-				</Link>
-			</div>
+		<header className="bg-gradient-to-r from-sky-900 via-white-700 to-sky-600 text-white p-4 shadow-md">
+			<nav className="flex space-x-4">
+				<div className="space-x-8 items-end flex items-center justify-center text-xl">
+					{/* Home and Center Title */}
+					<Link
+						href="/"
+						className="text-white text-7xl font-bold drop-shadow-xl"
+					>
+						TaskU
+					</Link>
 
-			{/* title */}
-			<h1 className="text-8xl font-bold text-white mb-6">
-				Task<span className="font-normal font-serif">U</span>
-			</h1>
+					{/* Dashboard */}
+					<Button
+						variant="link"
+						className={isActive('/dashboard') ? 'text-white underline' : 'text-white'}
+					>
+						<Link
+							href="/dashboard"
+							className="text-xl"
+						>
+							Dashboard
+						</Link>
+					</Button>
 
-			{/* tagline */}
-			<p className="text-black font-light text-2xl mt-5">
-				Discover job opportunities and find people to assist with your tasks here!
-			</p>
+					{/* Tasks */}
+					<Button
+						variant="link"
+						className={isActive('/tasks') ? 'text-white underline' : 'text-white'}
+					>
+						<Link
+							href="/tasks"
+							className="text-xl"
+						>
+							Tasks
+						</Link>
+					</Button>
+
+					{/* Profile */}
+					<Button
+						variant="link"
+						className={isActive('/profile') ? 'text-white underline' : 'text-white'}
+					>
+						<Link
+							href="/profile"
+							className="text-xl"
+						>
+							Profile
+						</Link>
+					</Button>
+				</div>
+			</nav>
 		</header>
 	);
 };

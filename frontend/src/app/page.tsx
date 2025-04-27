@@ -5,7 +5,7 @@ import Layout from '@/components/layout/layout';
 export default function Home() {
 	return (
 		<div>
-			<Layout>
+			<Layout isHomePage={true}>
 				<div className="flex flex-col items-center justify-center min-h-screen text-black">
 					<h1> Home Page</h1>
 					<h2>

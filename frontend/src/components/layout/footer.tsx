@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 const Footer = () => {
 	return (
-		<footer className="flex flex-col bg-gradient-to-r from-sky-900 via-sky-700 to-sky-600 text-emerald-50 p-4">
+		<footer className="flex flex-col bg-sky-500 text-emerald-50 p-4">
 			<div className="flex items-center justify-center">
 				<Hammer
 					size={32}
@@ -14,7 +14,7 @@ const Footer = () => {
 					href="/"
 					className="text-3xl font-bold"
 				>
-					TaskU
+					Task<span className="font-normal font-serif">U</span>
 				</Link>
 			</div>
 			<div className="text-center mt-4">

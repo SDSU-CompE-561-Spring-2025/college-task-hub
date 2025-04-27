@@ -3,7 +3,8 @@ import React from 'react';
 import Layout from '@/components/layout/layout';
 import AddressBar from '@/components/ui/addressBar';
 import { Button } from '@/components/ui/button';
-
+import DashboardButton from '@/components/layout/dashboardButton';
+import { User, PlusSquare } from 'lucide-react';
 
 export default function Home() {
 	return (
@@ -14,13 +15,11 @@ export default function Home() {
 					<div className="pt-10">
         				<AddressBar />
 					</div>
-      				<div className="flex p-30 space-x-25" >
-						<Button className="bg-sky-200 hover:bg-sky-400 border-2 border-black rounded-lg h-45 w-45">
-						</Button>
+      				<div className="flex pt-30 pb-30 space-x-25" >
 
-						<Button className="bg-sky-200 hover:bg-sky-400 border-2 border-black rounded-lg h-45 w-45">
+						<DashboardButton icon={<User size={64} />}> Do Tasks! </DashboardButton>
+						<DashboardButton icon={<PlusSquare size={64}/>}> Post Tasks! </DashboardButton>
 
-						</Button>
 					</div>
 
 

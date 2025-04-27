@@ -10,7 +10,7 @@ const HomeHeader = () => {
 	const isActive = (href: string): boolean => pathname === href;
 
 	return (
-		<header className="bg-sky-500 text-white p-4 shadow-md relative h-[250px] flex flex-col items-center justify-center">
+		<header className="bg-sky-500 text-white p-4 relative h-[250px] flex flex-col items-center justify-center">
 			{/* sign in and sign up buttons */}
 			<div className="absolute top-4 right-4 space-x-4">
 				<Link href="/signin">

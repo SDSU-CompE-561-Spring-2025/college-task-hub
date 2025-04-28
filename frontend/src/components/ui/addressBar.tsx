@@ -15,9 +15,11 @@ export default function AddressBar() {
       />
 
       {/* Right button */}
-      <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full" >
-        <ArrowRightCircle className="h-12 w-12 text-black" />
-      </Button>
+      <ArrowRightCircle className="h-6 w-6 text-black" />
+
+      {/*  as button tho it is weird with the ui: <Button variant="ghost" size="icon" className="h-6 w-6 p-0" >
+        <ArrowRightCircle className="h-6 w-6 text-black" />
+      </Button> */}
     </div>
   );
 }

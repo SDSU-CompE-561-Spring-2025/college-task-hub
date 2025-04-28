@@ -16,13 +16,9 @@ export default function Home() {
         				<AddressBar />
 					</div>
       				<div className="flex pt-30 pb-30 space-x-25" >
-
 						<DashboardButton icon={<User size={64} />}> Do Tasks! </DashboardButton>
 						<DashboardButton icon={<PlusSquare size={64}/>}> Post Tasks! </DashboardButton>
-
 					</div>
-
-
     				{/* Learn More */}
     				<div className="pb-10 mt-10 text-center">
     					<p className="font-semibold text-lg">Learn More ↓</p>

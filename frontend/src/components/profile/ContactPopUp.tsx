@@ -52,3 +52,4 @@ export default function ContactPopup({ email, phone_number }: ContactPopupProps)
     </Dialog>
   );
 }
+

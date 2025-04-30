@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import ReviewCard from "@/components/profile/ReviewCard";
 import ContactPopUp from "@/components/profile/ContactPopUp";
 import LeaveReview from "@/components/profile/LeaveReview";
-
+import { useState } from "react";
 
 interface Review {
   reviewerName: string;
@@ -53,15 +53,28 @@ export default function ProfileCard({
 }: ProfileCardProps) {
   const allSkills = skills.split(",").map(skill => skill.trim());
   const topSkills = allSkills.slice(0, 3);
+  const [adjustedSchool, setUpdatedSchool] = useState(school);
+  const [adjustedSkills, setUpdatedSkills] = useState(skills);
+  const [adjustedEmail, setUpdatedEmail] = useState(email);
+  const [adjustedPhoneNumber, setUpdatedPhoneNumber] = useState(phone_number);
+  const [adjustedCity, setUpdatedCity] = useState(city);
   
-
+  const Save = () => {
+    const updatedInfo = {
+      school: adjustedSchool,
+      skills: adjustedSkills,
+      email: adjustedEmail,
+      phone_number: adjustedPhoneNumber,
+    }
+  };
+    
   return (
     <div className="relative w-full max-w-4xl p-8 rounded-lg shadow-md mx-auto border-2 border-black">
 
-      {/* Contact & review buttons */}
+      {/* Contact & review buttons only show for the task posters*/}
       <div className="absolute top-4 right-4 flex gap-4">
-        <ContactPopUp email={email} phone_number={phone_number} />
-        <LeaveReview />
+        {role === "Task Poster" && (<ContactPopUp email={email} phone_number={phone_number} />)}
+        {role === "Task Poster" && (<LeaveReview />)}
       </div>
 
       {/* Profile info */}
@@ -83,17 +96,43 @@ export default function ProfileCard({
         <div className="flex-1 flex flex-col space-y-6">
           {/* Skills & Rating */}
           <div className="space-y-4 ">
+            <p className="text-lg font-semibold text-gray-700 mb-4">
+                Rating:
+                <span className="ml-2">
+                  {"⭐".repeat(Math.floor(rating))}{"☆".repeat(5 - Math.floor(rating))}
+                </span>
+              </p>
             <div>
-              <h3 className="text-lg font-semibold text-gray-700 mb-1">Top Skills</h3>
-              <p className="text-gray-700 font-semibold text-small">{topSkills.join(", ")}</p>
+              {role==="Task Performer"?(
+                <div className="flex items-center gap-2">
+                  <label className="text-gray-700 text-lg font-semibold "> Top Skills:</label>
+                  <input className="border px-4 py-1" value={adjustedSkills}
+                  onChange={(input) => setUpdatedSkills(input.target.value)}
+                  />
+                </div>
+              ) : (
+                <p className="text-gray-700 font-semibold text-small">{skills}</p>
+              )}
             </div>
-            <p className="text-lg font-semibold text-gray-700 mb-1">
-              Rating:
-              <span className="ml-2">
-                {"⭐".repeat(Math.floor(rating))}{"☆".repeat(5 - Math.floor(rating))}
-              </span>
-            </p>
           </div>
+
+          {/* Email and phone number are only openly displayed for task performers.*/}
+          {role === "Task Performer" &&(
+          <>
+          <div className="flex items-center gap-2">
+            <label className="text-gray-700 text-lg font-semibold">Email:</label>
+            <input className="border px-4 py-1" value={adjustedEmail}
+            onChange={(input) => setUpdatedEmail(input.target.value)}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-gray-700 text-lg font-semibold">Phone Number:</label>
+            <input className="border px-4 py-1" value={adjustedPhoneNumber}
+            onChange={(input) => setUpdatedPhoneNumber(input.target.value)}
+            />
+          </div>
+          </>
+          )}
 
           {/* About and Recent Jobs and More Skills */}
           <div className="flex gap-8">
@@ -101,9 +140,28 @@ export default function ProfileCard({
             <div className="flex-1 flex flex-col">
               <h2 className="text-xl font-bold mb-1 p-1">About</h2>
               <div className="border border-black rounded-lg p-6 mb-8 mt-2">
-                <p><span className="font-semibold">City:</span> {city}</p>
-                <p><span className="font-semibold">Role:</span> {role}</p>
-                <p><span className="font-semibold">School:</span> {school}</p>
+              <p><span className="font-semibold mb-2">Role:</span> {role}</p>
+              {role === "Task Performer" ? (
+                  <div className="flex items-center gap-2">
+                    <label className="font-semibold">City:</label>
+                    <input className="border px-2 py-1 mb-2" value={adjustedCity}
+                    onChange={(input) => setUpdatedCity(input.target.value)}
+                    />
+                </div>
+                  ) : (
+                  <p><span className="font-semibold">City:</span> {city}</p>
+                  )}
+                {/*Allow performer to edit School */}
+                {role === "Task Performer" ? (
+                  <div className="flex items-center gap-2">
+                    <label className="font-semibold">School:</label>
+                    <input className="border px-2 py-1" value={adjustedSchool}
+                    onChange={(input) => setUpdatedSchool(input.target.value)}
+                    />
+                </div>
+                  ) : (
+                    <p><span className="font-semibold">School:</span> {school}</p>
+                  )}
               </div>
 
               {/* Recent Jobs Box */}
@@ -125,12 +183,18 @@ export default function ProfileCard({
               <div>
                 <h2 className="text-xl font-bold mb-1 p-1">More Skills</h2>
                 <div className="border border-black rounded-lg p-6 mb-8 mt-2">
-                  <p className="text-black">{skills}</p>
+                 {role==="Task Performer"?(
+                  <div className="flex items-center gap-2">
+                    <textarea className = "border px-4 py-2 w-full h-32 rounded-md resize-none" value={adjustedSkills}
+                    onChange={(input) => setUpdatedSkills(input.target.value)}/> 
                 </div>
+                ) : (
+                  <p className="text-black text-small">{skills}</p>
+                )}
               </div>
-            </div>
-
-            {/* Reviews Box */}
+          </div>
+        </div>
+        {/* Reviews Box */}
             <div className="w-[400px] flex flex-col">
               <h2 className="text-xl font-bold mb-1 p-1">Reviews</h2>
               <div className="border border-black rounded-lg p-6 mb-8 mt-2 space-y-6">
@@ -142,14 +206,23 @@ export default function ProfileCard({
                       reviewerProfilePicture={review.reviewerProfilePicture}
                       jobTitle={review.jobTitle}
                       rating={review.rating}
-                      comment={review.comment}
-                    />
+                      comment={review.comment}/>
                   ))
                 ) : (
                   <p className="text-black">No reviews yet.</p>
                 )}
               </div>
             </div>
+            {/*Saving changes*/}
+            {role === "Task Performer" && (
+              <div className="flex justify-end mt-4">
+                <button
+                  className="absolute bottom-10 right-50 bg-sky-600 hover:bg-sky-700 text-white px-6 py-2 rounded-full"
+                  onClick={Save} >
+                  Save Changes
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

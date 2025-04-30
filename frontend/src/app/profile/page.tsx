@@ -40,7 +40,8 @@ export default function ProfilePage() {
 			}
 			],
 			email: "user@email.com",
-  			phone_number: "(123) 456-7890"
+  			phone_number: "(123) 456-7890",
+
 	  };
 
 
@@ -60,10 +61,12 @@ export default function ProfilePage() {
 			  reviews = {userData.reviews}
 			  email = {userData.email}
 			  phone_number = {userData.phone_number}
+
 />
-			
+	
 		  </div>
 		</Layout>
 	  );
+	  
 }
 

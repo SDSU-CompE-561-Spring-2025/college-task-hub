@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 
 export type DashboardButtonProps = {
-  /** Optional icon element (e.g. a lucide-react icon) */
+
   icon?: React.ReactNode;
   children: React.ReactNode;
 };
@@ -23,7 +23,7 @@ export default function DashboardButton({
         space-y-1 
       `}
     >
-      {icon && <div className="flex-none text-black">{icon}</div>}
+      {icon && <div className="flex flex-row space-x-2 text-black max-w-none">{icon}</div>}
       <span className="flex-none text-sky-500 font-bold text-xl">
         {children}
       </span>

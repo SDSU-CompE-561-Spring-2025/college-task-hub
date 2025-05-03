@@ -4,8 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
-import { SignInDialog } from './signInDialog';
-import { SignUpDialog } from './signUpDialog';
+import { SignInDialog } from '../auth/signInDialog';
+import { SignUpDialog } from '../auth/signUpDialog';
 
 const HomeHeader = () => {
 	const pathname = usePathname();

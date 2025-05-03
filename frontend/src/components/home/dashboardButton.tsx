@@ -21,6 +21,7 @@ export default function DashboardButton({
         h-45 w-45 
         flex flex-col items-center justify-center
         space-y-1 
+        cursor-pointer
       `}
     >
       {icon && <div className="flex flex-row space-x-2 text-black max-w-none">{icon}</div>}

@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import AddressBar from '@/components/ui/addressBar';
-import DashboardButton from '@/components/layout/dashboardButton';
+import DashboardButton from '@/components/home/dashboardButton';
 import ToolClusterLeft from '@/components/home/toolClusterLeft';
 import ToolClusterRight from '@/components/home/toolClusterRight';
 import { UserCheck, Watch, Wrench, Wifi, Truck, Smartphone } from 'lucide-react';

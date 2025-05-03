@@ -1,64 +1,40 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
+import HeaderButton from './headerButton';
 
 const Header = () => {
 	const pathname = usePathname();
 	const isActive = (href: string): boolean => pathname === href;
 
+	const navLinks = [
+		{ name: 'Home', href: '/' },
+		{ name: 'Dashboard', href: '/dashboard' },
+		{ name: 'Job Post', href: '/job-post' },
+		{ name: 'Profile', href: '/profile' },
+	];
+
 	return (
-		<header className="bg-gradient-to-r from-sky-900 via-white-700 to-sky-600 text-white p-4 shadow-md">
-			<nav className="flex space-x-4">
-				<div className="space-x-8 items-end flex items-center justify-center text-xl">
-					{/* Home and Center Title */}
-					<Link
-						href="/"
-						className="text-white text-7xl font-bold drop-shadow-xl"
-					>
-						TaskU
-					</Link>
+		<header className="bg-sky-500 text-white py-4 px-6 shadow-md">
+			<nav className="max-w-6xl mx-auto flex justify-center gap-36 items-start">
+				{/* Left links */}
+				<div className="flex space-x-6 mt-14">
+					{navLinks.slice(0, 2).map((link) => (
+						<HeaderButton key={link.name} href={link.href} label={link.name} />
+					))}
+				</div>
 
-					{/* Dashboard */}
-					<Button
-						variant="link"
-						className={isActive('/dashboard') ? 'text-white underline' : 'text-white'}
-					>
-						<Link
-							href="/dashboard"
-							className="text-xl"
-						>
-							Dashboard
-						</Link>
-					</Button>
+				{/* Center logo */}
+				<h1 className="text-8xl font-bold text-white">
+					Task<span className="font-normal font-serif">U</span>
+				</h1>
 
-					{/* Tasks */}
-					<Button
-						variant="link"
-						className={isActive('/tasks') ? 'text-white underline' : 'text-white'}
-					>
-						<Link
-							href="/tasks"
-							className="text-xl"
-						>
-							Tasks
-						</Link>
-					</Button>
-
-					{/* Profile */}
-					<Button
-						variant="link"
-						className={isActive('/profile') ? 'text-white underline' : 'text-white'}
-					>
-						<Link
-							href="/profile"
-							className="text-xl"
-						>
-							Profile
-						</Link>
-					</Button>
+				{/* Right links */}
+				<div className="flex space-x-6 mt-14">
+					{navLinks.slice(2).map((link) => (
+						<HeaderButton key={link.name} href={link.href} label={link.name} />
+					))}
 				</div>
 			</nav>
 		</header>

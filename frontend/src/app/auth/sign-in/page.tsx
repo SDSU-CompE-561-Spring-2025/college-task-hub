@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '@/components/layout/layout';
-import SignInCard from '@/components/layout/signInCard';
+import SignInCard from '@/components/layout/signInDialog';
 
 // NOTE:
 // This will be implemented as a modal pop-up on top of the Home page.

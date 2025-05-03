@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Layout from '@/components/layout/layout';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
 	Select,
@@ -110,11 +110,23 @@ const PostTasks = () => {
 								className="cursor-pointer hover:shadow-lg transition"
 							>
 								<CardHeader>
-									<CardTitle>{task.title}</CardTitle>
+									<CardTitle className="text-lg">{task.title}</CardTitle>
+									{/* Profile Picture */}
+									<div className="flex items-center space-x-2">
+										<img
+											src="/next.svg"
+											alt="Profile Picture"
+											className="w-5 h-5 rounded-full border border-gray-300"
+										/>
+										<div className="flex items-center space-x-4 text-sm text-gray-500">
+											<p> MyUserName12 </p>
+										</div>
+									</div>
 								</CardHeader>
 								<CardContent>
 									<p>{task.description}</p>
 								</CardContent>
+								<CardFooter className="relative flex items-center justify-between"></CardFooter>
 							</Card>
 						))}
 					</div>
@@ -130,7 +142,7 @@ const PostTasks = () => {
 							setIsDialogOpen(open);
 						}}
 					>
-						<DialogContent>
+						<DialogContent className="w-screen max-w-none max-h-none">
 							<DialogHeader>
 								<DialogTitle>
 									{isEditing ? 'Edit Task' : selectedTask ? 'Task Details' : 'Create Task'}
@@ -139,7 +151,26 @@ const PostTasks = () => {
 							{!isEditing && selectedTask ? (
 								// Viewing Task Details
 								<div className="flex flex-col gap-4">
-									<h2 className="text-2xl font-bold">{selectedTask.title}</h2>
+									<h2 className="flex items-center justify-between text-2xl font-bold">
+										{/* Title on the left */}
+										<span>
+											{selectedTask.title}
+											<p className="flex text-sm text-gray-500"> Estimated Time: 60 minutes</p>
+										</span>
+
+										{/* Profile Picture and Info on the right */}
+										<div className="flex items-center space-x-2">
+											<img
+												src="/next.svg"
+												alt="Profile Picture"
+												className="w-8 h-8 rounded-full border border-gray-300"
+											/>
+											<div className="flex flex-col text-sm text-gray-500">
+												<p>Created By: MyUserName12</p>
+												<p>Posted: 10/10/2025</p>
+											</div>
+										</div>
+									</h2>
 									<p>
 										<strong>Description:</strong> {selectedTask.description}
 									</p>

@@ -10,6 +10,7 @@ from fastapi import HTTPException, status
 from datetime import timedelta
 from app.middleware.logger import logger
 from app.models.users import Users
+from app.schema.users import UsersUpdate
 
 router = APIRouter()
 
@@ -41,7 +42,8 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/user",response_model=list[UsersResponse])
-async def get_users(db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+async def get_users(db: Session = Depends(get_db)):
+    """add this back after testing: , current_user: Users = Depends(get_current_user)"""
     """"
     Return a list of all current users in the database.
     Returns: A list of users.
@@ -50,7 +52,8 @@ async def get_users(db: Session = Depends(get_db), current_user: Users = Depends
     return crud_users.get_users(db=db)
 
 @router.get("/user/{user_id}", response_model=UsersResponse)
-async def get_user(user_id: int, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+async def get_user(user_id: int, db: Session = Depends(get_db)):
+    """ add this back in after testing: , current_user: Users = Depends(get_current_user)"""
     """"
     Return a single user by their ID.
     user_id: int - The ID of the user to retrieve.
@@ -60,7 +63,9 @@ async def get_user(user_id: int, db: Session = Depends(get_db), current_user: Us
     return crud_users.get_user(db=db, user_id=user_id)
 
 @router.put("/user/{user_id}",response_model=UsersResponse)
-async def update_user(user_id: int, user_data: UsersCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+# I changed this to UsersCreate from UsersUpdate so the profile updates don't requre a password
+#add back after testing: , current_user: Users = Depends(get_current_user))
+async def update_user(user_id: int, user_data: UsersUpdate, db: Session = Depends(get_db)):
     """"
     Update a single user's information in the database.
     user_id: int - The ID of the user to update.

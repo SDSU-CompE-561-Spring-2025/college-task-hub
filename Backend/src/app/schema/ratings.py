@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 class RatingsBase(BaseModel):
     rating: int
@@ -9,7 +10,11 @@ class RatingsBase(BaseModel):
     receiver_id: int
 
 class RatingsCreate(RatingsBase):
-    pass
+    rating: int
+    comment: str
+    giver_id: int
+    receiver_id: int
+    created_at: Optional[datetime] = None
 
 class RatingsResponse(RatingsBase):
     id: int

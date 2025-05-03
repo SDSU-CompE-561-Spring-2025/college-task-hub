@@ -4,15 +4,40 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {MessageCircle,CheckSquare, X } from "lucide-react";
+import { submitReview } from "@/lib/api/submitReview";
 
 export default function LeaveReview() {
 
   {/* Manages the rating */}
   const [rating, setRating] = useState(0);
-   
-
+  const [name, setName] = useState("");
+  const [taskCompleted, setTaskCompleted] = useState("");
+  const [comment, setComment] = useState("");
+  const [open, setOpen] = useState(false);
+  
+  
+  const handleSubmit = async () => {
+    const review = {
+      reviewerName: name,
+      reviewerProfilePicture: `https://randomuser.me/api/portraits/${Math.random() < 0.5 ? "men" : "women"}/${Math.floor(Math.random() * 100)}.jpg`,
+      jobTitle: taskCompleted,
+      rating,
+      comment,
+      giver_id: 2,      // TODO: get from logged-in user
+      receiver_id: 1,   // TODO: get from profile being viewed
+    };
+  
+    try {
+      await submitReview(review);
+      alert("Review submitted!");
+      setOpen(false); 
+    } catch (err) {
+      alert("Failed to submit review.");
+    }
+  };
+  
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-full">
           Leave Review
@@ -30,7 +55,12 @@ export default function LeaveReview() {
           {/* Name */}
           <div>
             <label className="block text-lg mb-1">Name</label>
-            <Input placeholder="First Name" className="rounded-full border-gray-300 px-4 py-2 text-base bg-white" />
+            <Input
+              placeholder="First Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="rounded-full border-gray-300 px-4 py-2 text-base bg-white"
+            />
           </div>
 
           {/* Task Completed */}
@@ -39,7 +69,12 @@ export default function LeaveReview() {
               Task Completed
               <CheckSquare className="h-5 w-5" />
             </label>
-            <Input placeholder="Walked Dog" className="rounded-full border-gray-300 px-4 py-2 text-base bg-white" />
+            <Input
+              placeholder="Walked Dog"
+              value={taskCompleted}
+              onChange={(e) => setTaskCompleted(e.target.value)}
+              className="rounded-full border-gray-300 px-4 py-2 text-base bg-white"
+            />
           </div>
 
           {/* Review */}
@@ -49,6 +84,8 @@ export default function LeaveReview() {
             </label>
             <textarea
               placeholder="This experience was..."
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
               className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base bg-white"
             />
           </div>
@@ -58,7 +95,7 @@ export default function LeaveReview() {
             {[...Array(5)].map((_, index) => (
               <span
                 key={index}
-                onClick={() => setRating(index + 1)} 
+                onClick={() => setRating(index + 1)}  
                 className="cursor-pointer"
               >
                 {index < rating ? "⭐" : "☆"}
@@ -68,7 +105,7 @@ export default function LeaveReview() {
 
           <div className="flex justify-end">
             {/* Submit Button */}
-          <button className="text-right text-black font-semibold py-2">
+          <button onClick={handleSubmit} className="text-right text-black font-semibold py-2">
             Submit
           </button>
           </div>

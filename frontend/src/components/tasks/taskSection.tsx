@@ -21,6 +21,7 @@ const TaskSection: React.FC<TaskSectionProps> = ({ title, tasks, setTasks }) => 
                 key={index}
                 taskName={task}
                 section={title}
+                profilePicUrl="https://example.com/image.jpg"
               />
             ))}
         </div>

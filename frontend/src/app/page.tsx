@@ -1,23 +1,24 @@
+"use client";
 import Link from 'next/link';
 import React from 'react';
 import Layout from '@/components/layout/layout';
+import HeroSection from '@/components/home/heroSection';
+import LearnMoreButton from '@/components/home/learnMoreButton';
+import AboutSection from '@/components/home/aboutSection';
 
 export default function Home() {
 	return (
 		<div>
 			<Layout isHomePage={true}>
-				<div className="flex flex-col items-center justify-center min-h-screen text-black">
-					<h1> Home Page</h1>
-					<h2>
-						<Link href="/auth/sign-in">Sign in</Link>
-						<br />
-						<Link href="/auth/sign-up">Sign up</Link>
-						<br />
-						<Link href="/dashboard/poster">Post Tasks</Link>
-						<br />
-						<Link href="/dashboard/performer">Do Tasks</Link>
-						<br />
-					</h2>
+				
+				<div className="flex flex-col items-center justify-center text-black">
+
+					<HeroSection />
+
+					<LearnMoreButton />
+
+					<AboutSection />
+
 				</div>
 			</Layout>
 		</div>

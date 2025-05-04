@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 import Layout from '@/components/layout/layout';
-import TaskCard from '@/components/tasks/taskCard1';
+import TaskCard from '@/components/tasks/taskCardDeprecated';
 import PostTasks from './post/page';
 
 export default function TaskListPage() {

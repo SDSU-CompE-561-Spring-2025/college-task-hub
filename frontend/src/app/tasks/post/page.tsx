@@ -12,7 +12,7 @@ import {
 	SelectItem,
 } from '@/components/ui/select';
 import { TaskType, TaskCreate } from '@/types/task';
-import TaskCard from '@/components/tasks/taskCard1';
+import TaskCard from '@/components/tasks/taskCardDeprecated';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchTasks, createTask, updateTask, deleteTask } from '@/lib/api/tasks';
 

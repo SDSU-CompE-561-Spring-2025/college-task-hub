@@ -31,6 +31,7 @@ export const signIn = async (data: UserSignIn): Promise<AccessToken> => {
 				},
 			}
 		);
+		localStorage.setItem('access_token', response.data.access_token);
 		return response.data;
 	} catch (error) {
 		console.error('Error signing in:', error);

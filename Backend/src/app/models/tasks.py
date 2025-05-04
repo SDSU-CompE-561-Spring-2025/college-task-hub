@@ -15,6 +15,8 @@ class Tasks(Base):
     status = Column(String, index=True, nullable=True)
     price = Column(Integer, index=True, nullable=False)
     created_at = Column(DateTime, index=True, nullable=False, default=datetime.now(UTC))
+    duration = Column(String, index=True, nullable=True)
+    category = Column(String, index=True, nullable=True)
 
     # Foreign keys
     user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)

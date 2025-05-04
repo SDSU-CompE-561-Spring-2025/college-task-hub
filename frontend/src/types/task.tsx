@@ -5,6 +5,9 @@ export type TaskCreate = {
 	price: number;
 	user_id: number;
 	location_id: number;
+	duration: string;
+	avatar?: string;
+	category?: string;
 };
 
 export type TaskType = TaskCreate & {

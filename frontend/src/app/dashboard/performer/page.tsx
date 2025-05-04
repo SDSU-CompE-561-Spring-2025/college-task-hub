@@ -1,10 +1,12 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Layout from '@/components/layout/layout';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import SuggestionsBar from '@/components/tasks/suggestionsBar';
-import PerformerTaskCard from '@/components/tasks/performerTaskCard';
 import SearchBar from '@/components/tasks/taskSearchBar';
 import TaskSuggestions from '@/components/tasks/taskSuggestions';
+import { fetchTasks } from '@/lib/api/tasks';
+import { TaskType } from '@/types/task';
 
 const categories = [
 	'Caregiving',
@@ -18,34 +20,40 @@ const categories = [
 	'Transport',
 ];
 
-const tasks = {
-	Labor: [
-		{ title: 'Unload Uhaul', duration: '3hr', rate: '$20/hr', avatar: '🧑‍🦱' },
-		{ title: 'Build Bunk Bed', duration: '2hr', rate: '$25/hr', avatar: '👩' },
-		{ title: 'Pull Weeds', duration: '1hr', rate: '$20/hr', avatar: '👴' },
-	],
-	'Pet Care': [
-    	{ title: 'Walk Two Dogs', duration: '1hr', rate: '$22/hr', avatar: '👦' },
-    	{ title: 'Cat Sit', duration: '4hr', rate: '$15/hr', avatar: '👩🏽' },
-    	{ title: 'Take Dog To The Dog Park', duration: '3hr', rate: '$20/hr', avatar: '🧑‍🦱' },
-  	],
-};
-
 const PerformerDashboardPage = () => {
+	const [tasks, setTasks] = useState<TaskType[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+	useEffect(() => {
+		const loadTasks = async () => {
+			try {
+				const data = await fetchTasks(selectedCategory || undefined);
+				setTasks(data);
+			} catch (err) {
+				setError('Failed to load tasks');
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		loadTasks();
+	}, [selectedCategory]);
+
 	return (
 		<Layout>
-    		<div className="flex min-h-screen mt-4">
-
+			<div className="flex min-h-screen mt-4">
 				<SuggestionsBar categories={categories} />
 
-    			<main className="flex-1 p-6 space-y-6">
-
+				<main className="flex-1 p-6 space-y-6">
 					<SearchBar />
-					<TaskSuggestions tasks={tasks} />
-					
-    	    	</main>
-    		</div>
-    	</Layout>
+					{loading && <p>Loading tasks...</p>}
+					{error && <p className="text-red-500">{error}</p>}
+					{!loading && !error && <TaskSuggestions tasks={tasks} />}
+				</main>
+			</div>
+		</Layout>
 	);
 };
 

@@ -1,33 +1,25 @@
 import React from 'react';
 import PerformerTaskCard from '@/components/tasks/performerTaskCard';
-
-type Task = {
-    title: string;
-    duration: string;
-    rate: string;
-    avatar: string;
-};
+import { TaskCreate, TaskType } from '@/types/task';
 
 type TaskSuggestionsProps = {
-    tasks: Record<string, Task[]>;
+	tasks: TaskType[];
 };
 
 const TaskSuggestions: React.FC<TaskSuggestionsProps> = ({ tasks }) => {
-    return (
-        <section className="mt-12">
-            <h2 className="text-2xl font-bold mb-6">Task Suggestions</h2>
-            {Object.entries(tasks).map(([category, items]) => (
-                <div key={category} className="mb-6">
-                    <h3 className="text-lg font-semibold mb-2">{category}</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {items.map((task, index) => (
-                            <PerformerTaskCard key={index} task={task}/>
-                          ))}
-                    </div>
-                </div>
-            ))}
-        </section>
-    );
+	return (
+		<section className="mt-12">
+			<h2 className="text-2xl font-bold mb-6">Task Suggestions</h2>
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+				{tasks.map((task) => (
+					<PerformerTaskCard
+						key={task.id}
+						task={task}
+					/>
+				))}
+			</div>
+		</section>
+	);
 };
 
 export default TaskSuggestions;

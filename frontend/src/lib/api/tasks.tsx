@@ -2,8 +2,11 @@ import axios from 'axios';
 import { TaskType, TaskCreate } from '@/types/task';
 
 // Fetch Tasks component
-export const fetchTasks = async (): Promise<TaskType[]> => {
-	const response = await axios.get('http://localhost:8000/api/task');
+export const fetchTasks = async (category?: string): Promise<TaskType[]> => {
+	const url = new URL(`http://localhost:8000/api/task`);
+	if (category) url.searchParams.append('category', category);
+
+	const response = await axios.get(url.toString());
 	if (response.status !== 200) {
 		throw new Error('Failed to fetch tasks');
 	}
@@ -43,4 +46,13 @@ export const deleteTask = async (id: number): Promise<void> => {
 	if (response.status !== 200) {
 		throw new Error('Failed to delete task');
 	}
+};
+
+// Fetch all tasks for the current poster
+export const fetchPosterTasks = async (): Promise<TaskType[]> => {
+	const response = await axios.get('http://localhost:8000/api/task/mine');
+	if (response.status !== 200) {
+		throw new Error('Failed to fetch user’s tasks');
+	}
+	return response.data;
 };

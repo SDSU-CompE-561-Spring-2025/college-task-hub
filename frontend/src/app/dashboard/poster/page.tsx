@@ -1,32 +1,43 @@
 'use client';
 
-import Link from 'next/link';
-import React from 'react';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '@/components/layout/layout';
-import PostTasks from '@/app/tasks/post/page';
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import TaskSection from '@/components/tasks/taskSection';
+import { TaskType } from '@/types/task';
+import { fetchPosterTasks } from '@/lib/api/tasks';
 
 export default function PosterDashboardPage() {
+	const [unassignedTasks, setUnassignedTasks] = useState<TaskType[]>([]);
+	const [inProgressTasks, setInProgressTasks] = useState<TaskType[]>([]);
+	const [pastTasks, setPastTasks] = useState<TaskType[]>([]);
 
-	const [unassignedTasks, setUnassignedTasks] = useState(['Task 1', 'Task 2', 'Task 3', 'Task 7']);
-  	const [inProgressTasks, setInProgressTasks] = useState(['Task 4', 'Task 5']);
-  	const [pastTasks, setPastTasks] = useState(['Task 6']);
+	useEffect(() => {
+		const loadTasks = async () => {
+			try {
+				const myTasks = await fetchPosterTasks();
+				setUnassignedTasks(myTasks.filter((t) => t.status === 'unassigned'));
+				setInProgressTasks(myTasks.filter((t) => t.status === 'in_progress'));
+				setPastTasks(myTasks.filter((t) => t.status === 'complete'));
+			} catch (err) {
+				console.error('Failed to load poster tasks:', err);
+			}
+		};
+
+		loadTasks();
+	}, []);
 
 	return (
 		<div>
 			<Layout>
 				<div className="flex flex-col items-center justify-center text-black mb-8">
-
 					<h1 className="text-3xl font-semibold mt-8 mb-4">My Listings</h1>
-					<TaskSection 
+					<TaskSection
 						title="Unassigned"
 						tasks={unassignedTasks}
 						setTasks={setUnassignedTasks}
 					/>
 
-					<TaskSection 
+					<TaskSection
 						title="In Progress"
 						tasks={inProgressTasks}
 						setTasks={setInProgressTasks}

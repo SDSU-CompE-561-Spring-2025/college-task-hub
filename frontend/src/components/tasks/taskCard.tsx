@@ -2,9 +2,9 @@
 import React from 'react';
 
 interface TaskCardProps {
-  taskName: string;
-  section?: string;
-  profilePicUrl?: string;
+    taskName: string;
+    section?: string;
+    profilePicUrl?: string;
 }
 
 export default function TaskCard({ taskName, section, profilePicUrl }: TaskCardProps) {

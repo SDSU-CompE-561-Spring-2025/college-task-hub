@@ -1,4 +1,4 @@
-from app.schema.users import UsersCreate, UsersResponse
+from app.schema.users import UsersCreate, UsersResponse, UsersCreatedResponse
 from app.crud import users as crud_users
 from app.dependencies import get_db
 from fastapi import APIRouter, Depends
@@ -13,7 +13,7 @@ from app.models.users import Users
 
 router = APIRouter()
 
-@router.post("/user", response_model=UsersResponse)
+@router.post("/user", response_model=UsersCreatedResponse)
 async def create_user(user_data: UsersCreate, db: Session = Depends(get_db)):
     """"
     Create a new user and add it to the database.
@@ -25,7 +25,7 @@ async def create_user(user_data: UsersCreate, db: Session = Depends(get_db)):
 
 @router.post("/user/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = crud_users.authenticate_user(db, name=form_data.username, password=form_data.password)
+    user = crud_users.authenticate_user(db, email=form_data.username, password=form_data.password)
     
     if not user:
         raise HTTPException(

@@ -1,14 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Card, CardContent } from '@/components/ui/card';
 
 type Task = {
@@ -40,12 +33,11 @@ const PerformerTaskCard: React.FC<TaskCardProps> = ({ task }) => {
                   </CardContent>
                 </Card>
             </DialogTrigger>    
-            <DialogContent>
+            <DialogContent className="rounded-lg">
                 <DialogHeader>
                     <DialogTitle>{task.title}</DialogTitle>
                 </DialogHeader>
               
-                {/* Move content OUTSIDE of DialogDescription */}
                 <DialogDescription>
                     {task.description || 'No additional description provided.'}
                 </DialogDescription>

@@ -37,3 +37,10 @@ class UsersUpdate(BaseModel):
     email: EmailStr
     phone_number: str
     rating: float
+
+class ReviewIn(BaseModel):
+    rating: int
+    comment: str
+    job_title: str
+    giver_id: int
+    receiver_id: int

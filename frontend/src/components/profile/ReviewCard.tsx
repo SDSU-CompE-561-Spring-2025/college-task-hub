@@ -13,7 +13,6 @@ interface ReviewCardProps {
 export default function ReviewCard({
   reviewerName,
   reviewerProfilePicture,
-  jobTitle,
   rating,
   comment,
   

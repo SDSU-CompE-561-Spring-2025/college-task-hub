@@ -1,13 +1,11 @@
 import axios from "axios";
 
 export type ReviewPayload = {
-  //reviewerName: string;
-  //reviewerProfilePicture: string;
-  //jobTitle: string;
   rating: number;
   comment: string;
   giver_id: number;
   receiver_id: number;
+  job_title: string;
 };
 
 export const submitReview = async (data: ReviewPayload) => {

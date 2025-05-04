@@ -40,7 +40,6 @@ export default function ProfilePage() {
 			  //Two switch between viewer roles edit this line 
 			  viewerRole="Task Performer" 
 			  //school = {userData.school}
-			  recentJobs = {userData.recentJobs}
 			  reviews = {userData.reviews}
 			  email = {userData.email}
 			  phone_number = {userData.phone_number}

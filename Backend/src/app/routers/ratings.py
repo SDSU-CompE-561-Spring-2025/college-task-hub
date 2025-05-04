@@ -9,9 +9,8 @@ from app.models.users import Users
 from typing import List
 
 router = APIRouter()
-#Temporarily commenting this out for testing: current_user: Users = Depends(get_current_user)
 @router.post("/rating",response_model=RatingsResponse)
-async def create_rating(rating_data: RatingsCreate, db: Session = Depends(get_db), 
+async def create_rating(rating_data: RatingsCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)
 ):
     """
     Create a new rating and add it to the database.

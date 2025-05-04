@@ -20,7 +20,7 @@ export default function LeaveReview() {
     const review = {
       reviewerName: name,
       reviewerProfilePicture: `https://randomuser.me/api/portraits/${Math.random() < 0.5 ? "men" : "women"}/${Math.floor(Math.random() * 100)}.jpg`,
-      jobTitle: taskCompleted,
+      job_title: taskCompleted,
       rating,
       comment,
       giver_id: 2,      // TODO: get from logged-in user
@@ -62,7 +62,6 @@ export default function LeaveReview() {
               className="rounded-full border-gray-300 px-4 py-2 text-base bg-white"
             />
           </div>
-
           {/* Task Completed */}
           <div>
             <label className="flex items-center gap-2 text-lg mb-1">
@@ -76,7 +75,6 @@ export default function LeaveReview() {
               className="rounded-full border-gray-300 px-4 py-2 text-base bg-white"
             />
           </div>
-
           {/* Review */}
           <div>
             <label className="block text-lg mb-1 flex items-center gap-2">
@@ -89,7 +87,6 @@ export default function LeaveReview() {
               className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base bg-white"
             />
           </div>
-
           {/* Star Rating */}
           <div className="flex items-center justify-center gap-1 text-2xl">
             {[...Array(5)].map((_, index) => (
@@ -102,7 +99,6 @@ export default function LeaveReview() {
               </span>
             ))}
           </div>
-
           <div className="flex justify-end">
             {/* Submit Button */}
           <button onClick={handleSubmit} className="text-right text-black font-semibold py-2">

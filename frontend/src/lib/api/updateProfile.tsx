@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 export type UsersUpdate = {
-  //name: string; // maps to "school" in your frontend form
   skills: string;
   email: string;
   phone_number: string;

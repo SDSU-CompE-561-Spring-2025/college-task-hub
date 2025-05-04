@@ -15,18 +15,18 @@ def create_user(db: Session, user_data: UsersCreate):
         name=user_data.name,
         email=user_data.email,
         password_hash=hashed_pass, 
-        skills=user_data.skills,
-        roles=user_data.roles,
-        rating=user_data.rating,
-        phone_number=user_data.phone_number,
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
+    return {
+        "id": db_user.id,
+        "name": db_user.name,
+        "email": db_user.email,
+    }
 
-def authenticate_user(db: Session, name: str, password: str):
-    user = db.query(Users).filter(Users.name == name).first()
+def authenticate_user(db: Session, email: str, password: str):
+    user = db.query(Users).filter(Users.email == email).first()
     if not user:
         return False
     if not verify_password(password, user.password_hash):

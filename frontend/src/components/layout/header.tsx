@@ -16,7 +16,7 @@ const Header = () => {
 	];
 
 	return (
-		<header className="bg-sky-500 text-white py-4 px-6 shadow-md">
+		<header className="bg-sky-500 text-white py-4 px-6">
 			<nav className="max-w-6xl mx-auto flex justify-center gap-36 items-start">
 				{/* Left links */}
 				<div className="flex space-x-6 mt-14">

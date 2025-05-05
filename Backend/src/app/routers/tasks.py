@@ -1,11 +1,13 @@
 from app.schema.tasks import TasksCreate, TasksResponse
 from app.crud import tasks as crud_tasks
 from app.dependencies import get_db
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from app.middleware.logger import logger
 from app.core.auth import get_current_user
 from app.models.users import Users
+from app.models.tasks import Tasks
+from typing import List, Optional
 
 router = APIRouter()
 
@@ -17,16 +19,27 @@ async def create_task(task_data: TasksCreate, db: Session = Depends(get_db), cur
     Returns: A success message indicating the task was created.
     """
     logger.info('Creating new task')
-    return crud_tasks.create_task(db=db, task_data=task_data)
+    return crud_tasks.create_task(db=db, task_data=task_data, user_id=current_user.id)
 
-@router.get("/task",response_model=list[TasksResponse])
-async def get_tasks(db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+@router.get("/task", response_model=List[TasksResponse])
+async def get_tasks(category: Optional[str] = Query(None), db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     """
     Return a list of all current tasks in the database.
     Returns: A list of tasks.
     """
-    logger.info('Requesting list of tasks')
-    return crud_tasks.get_tasks(db=db)
+    if category:
+        return db.query(Tasks).filter(Tasks.category == category).all()
+    return db.query(Tasks).all()
+
+@router.get("/task/mine", response_model=List[TasksResponse])
+def get_my_tasks(db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+    """
+    Get all tasks assigned to the current user.
+    current_user: User - The current user making the request.
+    db: Session - The database session.
+    Returns: A list of tasks assigned to the current user.
+    """
+    return db.query(Tasks).filter(Tasks.user_id == current_user.id).all()
 
 @router.get("/task/{task_id}", response_model=TasksResponse)
 async def get_task(task_id: int, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):

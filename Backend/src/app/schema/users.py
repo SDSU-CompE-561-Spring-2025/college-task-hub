@@ -10,7 +10,9 @@ class UsersBase(BaseModel):
     phone_number: str
 
 
-class UsersCreate(UsersBase):
+class UsersCreate(BaseModel):
+    name: str
+    email: EmailStr
     password: constr(min_length=8, max_length=64)
 
 #An internal schema you use when working with the DB
@@ -44,3 +46,10 @@ class ReviewIn(BaseModel):
     job_title: str
     giver_id: int
     receiver_id: int
+
+class UsersCreatedResponse(BaseModel):
+    id: int 
+    name: str
+    email: EmailStr
+    class Config:
+        from_attributes = True

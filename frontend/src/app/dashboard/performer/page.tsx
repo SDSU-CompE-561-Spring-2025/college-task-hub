@@ -1,39 +1,60 @@
-import Link from 'next/link';
-import React from 'react';
-import Layout from '@/components/layout/layout';
+'use client';
 
-export default function PerformerDashboardPage() {
+import React, { useEffect, useState } from 'react';
+import Layout from '@/components/layout/layout';
+import SuggestionsBar from '@/components/tasks/suggestionsBar';
+import SearchBar from '@/components/tasks/taskSearchBar';
+import TaskSuggestions from '@/components/tasks/taskSuggestions';
+import { fetchTasks } from '@/lib/api/tasks';
+import { TaskType } from '@/types/task';
+
+const categories = [
+	'Caregiving',
+	'Creative & DIY',
+	'Education',
+	'Errands',
+	'Home & Garden',
+	'Labor',
+	'Pet Care',
+	'Repairs',
+	'Transport',
+];
+
+const PerformerDashboardPage = () => {
+	const [tasks, setTasks] = useState<TaskType[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+	useEffect(() => {
+		const loadTasks = async () => {
+			try {
+				const data = await fetchTasks(selectedCategory || undefined);
+				setTasks(data);
+			} catch (err) {
+				setError('Failed to load tasks');
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		loadTasks();
+	}, [selectedCategory]);
+
 	return (
-		<div>
-			<Layout>
-				<div>
-					<h1>Task Suggestions</h1>
-					<ul>
-						{/*
-				  Eventually this should pull from the database.
-				  For now, these are placeholder links.
-			*/}
-						<li>
-							<Link href="/tasks/1">Unload Uhaul</Link>
-						</li>
-						<li>
-							<Link href="/tasks/2">Build Bunk Bed</Link>
-						</li>
-						<li>
-							<Link href="/tasks/3">Pull Weeds</Link>
-						</li>
-						<li>
-							<Link href="/tasks/4">Walk Two Dogs</Link>
-						</li>
-						<li>
-							<Link href="/tasks/5">Cat Sit</Link>
-						</li>
-						<li>
-							<Link href="/tasks/6">Take Dog To The Dog Park</Link>
-						</li>
-					</ul>
-				</div>
-			</Layout>
-		</div>
+		<Layout>
+			<div className="flex min-h-screen mt-4">
+				<SuggestionsBar categories={categories} />
+
+				<main className="flex-1 p-6 space-y-6">
+					<SearchBar />
+					{loading && <p>Loading tasks...</p>}
+					{error && <p className="text-red-500">{error}</p>}
+					{!loading && !error && <TaskSuggestions tasks={tasks} />}
+				</main>
+			</div>
+		</Layout>
 	);
-}
+};
+
+export default PerformerDashboardPage;

@@ -1,30 +1,53 @@
-import Link from 'next/link';
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Layout from '@/components/layout/layout';
+import TaskSection from '@/components/tasks/taskSection';
+import { TaskType } from '@/types/task';
+import { fetchPosterTasks } from '@/lib/api/tasks';
 
 export default function PosterDashboardPage() {
+	const [unassignedTasks, setUnassignedTasks] = useState<TaskType[]>([]);
+	const [inProgressTasks, setInProgressTasks] = useState<TaskType[]>([]);
+	const [pastTasks, setPastTasks] = useState<TaskType[]>([]);
+
+	useEffect(() => {
+		const loadTasks = async () => {
+			try {
+				const myTasks = await fetchPosterTasks();
+				setUnassignedTasks(myTasks.filter((t) => t.status === 'unassigned'));
+				setInProgressTasks(myTasks.filter((t) => t.status === 'in-progress'));
+				setPastTasks(myTasks.filter((t) => t.status === 'completed'));
+			} catch (err) {
+				console.error('Failed to load poster tasks:', err);
+			}
+		};
+
+		loadTasks();
+	}, []);
+
 	return (
 		<div>
 			<Layout>
-				<div>
-					<h1>Poster Dashboard</h1>
-					<ul>
-						{/*
-            Replace this list with a map function that pulls
-            the poster's active and past jobs from the backend.
-          */}
-						<li>
-							<Link href="/tasks/7">Clean House</Link>
-						</li>
-						<li>
-							<Link href="/tasks/8">Assemble Furniture</Link>
-						</li>
-						<li>
-							<Link href="/tasks/9">Pick Up Groceries</Link>
-						</li>
-					</ul>
+				<div className="flex flex-col items-center justify-center text-black mb-8">
+					<h1 className="text-3xl font-semibold mt-8 mb-4">My Listings</h1>
+					<TaskSection
+						title="Unassigned"
+						tasks={unassignedTasks}
+						setTasks={setUnassignedTasks}
+					/>
 
-					{/* A pop up should appear when clicking "Post a task" so no link included. */}
+					<TaskSection
+						title="In Progress"
+						tasks={inProgressTasks}
+						setTasks={setInProgressTasks}
+					/>
+
+					<TaskSection
+						title="Past"
+						tasks={pastTasks}
+						setTasks={setPastTasks}
+					/>
 				</div>
 			</Layout>
 		</div>

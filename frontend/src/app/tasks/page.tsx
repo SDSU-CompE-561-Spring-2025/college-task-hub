@@ -15,7 +15,6 @@ export default function TaskListPage() {
 				{/* This is the filter component */}
 				<JobPostFilterByCategory />
 
-				{/* Example of how to use the TaskCard component */}
 				<ul className="mt-4 space-y-2 underline text-blue-600">
 					<li>
 						<Link href="/tasks/123">Job Example 1</Link>

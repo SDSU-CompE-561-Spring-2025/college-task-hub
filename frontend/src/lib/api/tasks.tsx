@@ -3,28 +3,29 @@ import { TaskType, TaskCreate } from '@/types/task';
 
 // Fetch Tasks component
 export const fetchTasks = async (category?: string): Promise<TaskType[]> => {
+	const token = localStorage.getItem('access_token');
 	const url = new URL(`http://localhost:8000/api/task`);
 	if (category) url.searchParams.append('category', category);
 
-	const response = await axios.get(url.toString());
+	const response = await axios.get(url.toString(), {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
 	if (response.status !== 200) {
 		throw new Error('Failed to fetch tasks');
 	}
 	return response.data;
 };
 
-// Fetch Task by ID component
-export const fetchTaskById = async (id: number): Promise<TaskType> => {
-	const response = await axios.get(`http://localhost:8000/api/task/${id}`);
-	if (response.status !== 200) {
-		throw new Error('Failed to fetch task');
-	}
-	return response.data;
-};
-
 // Create Task component
 export const createTask = async (task: TaskCreate): Promise<TaskType> => {
-	const response = await axios.post('http://localhost:8000/api/task', task);
+	const token = localStorage.getItem('access_token');
+	const response = await axios.post('http://localhost:8000/api/task', task, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
 	if (response.status !== 200) {
 		throw new Error('Failed to create task');
 	}
@@ -33,7 +34,12 @@ export const createTask = async (task: TaskCreate): Promise<TaskType> => {
 
 // Update Task Componet
 export const updateTask = async (id: number, task: TaskCreate): Promise<TaskType> => {
-	const response = await axios.put(`http://localhost:8000/api/task/${id}`, task);
+	const token = localStorage.getItem('access_token');
+	const response = await axios.put(`http://localhost:8000/api/task/${id}`, task, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
 	if (response.status !== 200) {
 		throw new Error('Failed to update task');
 	}
@@ -42,7 +48,12 @@ export const updateTask = async (id: number, task: TaskCreate): Promise<TaskType
 
 // Delete Task component
 export const deleteTask = async (id: number): Promise<void> => {
-	const response = await axios.delete(`http://localhost:8000/api/task/${id}`);
+	const token = localStorage.getItem('access_token');
+	const response = await axios.delete(`http://localhost:8000/api/task/${id}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
 	if (response.status !== 200) {
 		throw new Error('Failed to delete task');
 	}
@@ -50,7 +61,12 @@ export const deleteTask = async (id: number): Promise<void> => {
 
 // Fetch all tasks for the current poster
 export const fetchPosterTasks = async (): Promise<TaskType[]> => {
-	const response = await axios.get('http://localhost:8000/api/task/mine');
+	const token = localStorage.getItem('access_token');
+	const response = await axios.get('http://localhost:8000/api/task/mine', {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
 	if (response.status !== 200) {
 		throw new Error('Failed to fetch user’s tasks');
 	}

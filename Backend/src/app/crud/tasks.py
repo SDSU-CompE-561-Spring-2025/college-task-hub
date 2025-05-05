@@ -1,12 +1,14 @@
 # crud/tasks.py
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 from app.models.tasks import Tasks
 from app.schema.tasks import TasksCreate
+from app.models.users import Users
+from app.core.auth import get_current_user
 
 # (Create) Create new task in the database
-def create_task(db: Session, task_data: TasksCreate):
-    db_task = Tasks(**task_data.dict())
+def create_task(db: Session, task_data: TasksCreate, user_id: int):
+    db_task = Tasks(**task_data.dict(exclude={"user_id"}), user_id=user_id)
     db.add(db_task)
     db.commit()
     db.refresh(db_task)

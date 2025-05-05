@@ -16,8 +16,8 @@ export default function PosterDashboardPage() {
 			try {
 				const myTasks = await fetchPosterTasks();
 				setUnassignedTasks(myTasks.filter((t) => t.status === 'unassigned'));
-				setInProgressTasks(myTasks.filter((t) => t.status === 'in_progress'));
-				setPastTasks(myTasks.filter((t) => t.status === 'complete'));
+				setInProgressTasks(myTasks.filter((t) => t.status === 'in-progress'));
+				setPastTasks(myTasks.filter((t) => t.status === 'completed'));
 			} catch (err) {
 				console.error('Failed to load poster tasks:', err);
 			}

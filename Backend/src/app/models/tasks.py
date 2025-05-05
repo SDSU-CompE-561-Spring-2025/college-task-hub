@@ -17,6 +17,7 @@ class Tasks(Base):
     created_at = Column(DateTime, index=True, nullable=False, default=datetime.now(UTC))
     duration = Column(String, index=True, nullable=True)
     category = Column(String, index=True, nullable=True)
+    avatar = Column(String, index=True, nullable=True)
 
     # Foreign keys
     user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)

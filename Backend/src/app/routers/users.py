@@ -43,8 +43,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/user",response_model=list[UsersResponse])
-async def get_users(db: Session = Depends(get_db)):
-    """add this back after testing: , current_user: Users = Depends(get_current_user)"""
+async def get_users(db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     """"
     Return a list of all current users in the database.
     Returns: A list of users.
@@ -52,9 +51,18 @@ async def get_users(db: Session = Depends(get_db)):
     logger.info('Requesting list of users')
     return crud_users.get_users(db=db)
 
+@router.get("/user/me", response_model=UsersResponse)
+async def get_user(db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+    """"
+    Return a single user whose logged in.
+    user_id: int - The ID of the user to retrieve.
+    Returns: The user if found, otherwise raises a 404 error.
+    """
+    logger.info('Requesting user by ID')
+    return crud_users.get_user(db=db, user_id=current_user.id)
+
 @router.get("/user/{user_id}", response_model=UsersResponse)
-async def get_user(user_id: int, db: Session = Depends(get_db)):
-    """ add this back in after testing: , current_user: Users = Depends(get_current_user)"""
+async def get_user(user_id: int, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     """"
     Return a single user by their ID.
     user_id: int - The ID of the user to retrieve.
@@ -65,7 +73,7 @@ async def get_user(user_id: int, db: Session = Depends(get_db)):
 
 @router.put("/user/{user_id}",response_model=UsersResponse)
 # I changed this to UsersCreate from UsersUpdate so the profile updates don't requre a password
-async def update_user(user_id: int, user_data: UsersUpdate, db: Session = Depends(get_db),current_user: Users = Depends(get_current_user)):
+async def update_user(user_id: int, user_data: UsersUpdate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     """"
     Update a single user's information in the database.
     user_id: int - The ID of the user to update.

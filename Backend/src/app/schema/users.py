@@ -46,3 +46,10 @@ class ReviewIn(BaseModel):
     job_title: str
     giver_id: int
     receiver_id: int
+
+class UsersCreatedResponse(BaseModel):
+    id: int 
+    name: str
+    email: EmailStr
+    class Config:
+        from_attributes = True

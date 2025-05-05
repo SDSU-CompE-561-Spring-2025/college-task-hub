@@ -29,9 +29,20 @@ class UsersResponse(UsersBase):
     class Config:
         from_attributes = True
 
-class UsersCreatedResponse(BaseModel):
-    id: int 
-    name: str
+#Adding UsersUpdate for profile updates
+class UsersUpdate(BaseModel):
+    skills: str | None = None
     email: EmailStr
-    class Config:
-        from_attributes = True
+    phone_number: str
+    name: str
+    roles: str
+    email: EmailStr
+    phone_number: str
+    rating: float
+
+class ReviewIn(BaseModel):
+    rating: int
+    comment: str
+    job_title: str
+    giver_id: int
+    receiver_id: int

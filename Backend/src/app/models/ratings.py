@@ -12,7 +12,7 @@ class Ratings(Base):
     id = Column(Integer, primary_key=True, index=True)
     rating = Column(Integer, index=True, nullable=False)
     comment = Column(String, index=True, nullable=True)
-    created_at = Column(DateTime, index=True, nullable=False, default=datetime.now(UTC))
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     # Foreign keys
     giver_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)

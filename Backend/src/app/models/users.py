@@ -17,6 +17,7 @@ class Users(Base):
     rating = Column(Integer, index=True, nullable=True)
     phone_number = Column(String, unique=True, index=True)
 
+
     # Child relationships
     # Reference notifications.py
     notifications_users_child = relationship("Notifications", back_populates="notifications_users_parent")

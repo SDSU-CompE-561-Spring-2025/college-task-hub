@@ -5,16 +5,18 @@ from app.models.users import Users
 from app.schema.users import UsersCreate
 from app.core.security import verify_password
 from app.core.auth import get_password_hash
+#Adding this import for the profile update
+from app.schema.users import UsersUpdate
 
 
 # (Create) Create new user in the database
 def create_user(db: Session, user_data: UsersCreate):
     hashed_pass = get_password_hash(user_data.password)
-    
+
     db_user = Users(
         name=user_data.name,
         email=user_data.email,
-        password_hash=hashed_pass, 
+        password_hash=hashed_pass,
     )
     db.add(db_user)
     db.commit()
@@ -44,13 +46,18 @@ def get_users(db: Session):
     return db.query(Users).all()
 
 # (Update) Update a user in the database
-def update_user(db: Session, user_id: int, user_data: UsersCreate):
+#I changed the function to use UsersUpdate instead of UsersCreate
+def update_user(db: Session, user_id: int, user_data: UsersUpdate):
     user = get_user(db, user_id)
     for field, value in user_data.dict().items():
+        #Commening this out because updating should not require a password
+        """
         if field == "password":
             setattr(user, "password_hash", value)
         else:
-            setattr(user, field, value)
+        """
+        setattr(user, field, value)
+
     db.commit()
     db.refresh(user)
     return user

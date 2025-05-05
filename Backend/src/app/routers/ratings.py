@@ -6,11 +6,12 @@ from app.crud import ratings as crud_ratings
 from app.middleware.logger import logger
 from app.core.auth import get_current_user
 from app.models.users import Users
+from typing import List
 
 router = APIRouter()
-
 @router.post("/rating",response_model=RatingsResponse)
-async def create_rating(rating_data: RatingsCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+async def create_rating(rating_data: RatingsCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)
+):
     """
     Create a new rating and add it to the database.
     rating_data: RatingCreate - The data for the new rating.
@@ -49,3 +50,9 @@ async def delete_rating(rating_id: int, db: Session = Depends(get_db), current_u
     """
     logger.info('Deleting rating')
     return crud_ratings.delete_rating(db=db, rating_id=rating_id)
+
+#Adding so in profile we can see all ratings given to a user
+@router.get("/ratings/{receiver_id}", response_model=List[RatingsResponse])
+async def get_reviews_for_user(receiver_id: int, db: Session = Depends(get_db)):
+    logger.info(f'Getting all reviews for user {receiver_id}')
+    return crud_ratings.get_ratings_for_user(db=db, receiver_id=receiver_id)

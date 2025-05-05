@@ -4,6 +4,10 @@ from app.routers import users, locations, tasks, notifications, ratings
 from fastapi.middleware.cors import CORSMiddleware
 from app.middleware.logger import logger
 from app.middleware.logging_middleware import LoggingMiddleware
+import os
+from fastapi.staticfiles import StaticFiles
+from app.routers import users
+
 
 Base.metadata.create_all(bind=engine) # Create tables
 
@@ -35,3 +39,9 @@ app.include_router(ratings.router, prefix="/api", tags=["ratings"])
 @app.get("/")
 def root():
     return {"Hello:World"}
+
+# For profile pictures
+os.makedirs("media/profile_images", exist_ok=True)
+app.mount("/media", StaticFiles(directory="media"), name="media")
+app.include_router(users.router, prefix="/api")
+

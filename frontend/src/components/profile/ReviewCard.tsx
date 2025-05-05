@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface ReviewCardProps {
   reviewerName: string;
@@ -13,22 +13,27 @@ interface ReviewCardProps {
 export default function ReviewCard({
   reviewerName,
   reviewerProfilePicture,
-  jobTitle,
   rating,
   comment,
+  
 }: ReviewCardProps) {
+  const [profilePictureUrl, setProfilePictureUrl] = useState("");
+
+  useEffect(() => {
+    const gender = Math.random() < 0.5 ? "men" : "women";
+    const number = Math.floor(Math.random() * 100);
+    const url = `https://randomuser.me/api/portraits/${gender}/${number}.jpg`;
+    setProfilePictureUrl(url);
+  }, []);
   return (
     <div className="border-b pb-4 last:border-none">
       {/* Profile picture, name, & task */}
       <div className="flex items-center space-x-4 mb-2">
-        <img 
-          src={reviewerProfilePicture} 
+        <img
+          src={profilePictureUrl || "https://randomuser.me/api/portraits/men/75.jpg"} 
           alt="Reviewer profile" 
           className="w-10 h-10 rounded-full object-cover"
         />
-        <div>
-          <p className="font-bold">{reviewerName} - <span className="font-normal">{jobTitle}</span></p>
-        </div>
       </div>
 
       {/* Rating */}

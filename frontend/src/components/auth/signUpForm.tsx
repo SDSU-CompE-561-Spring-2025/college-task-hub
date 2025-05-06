@@ -51,8 +51,14 @@ export default function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
 			if (onSuccess) {
 				onSuccess(); // Call the onSuccess callback if provided
 			}
-		} catch (error) {
-			console.error('Error signing up:', error);
+		} catch (error: any) {
+			if (error.response?.status === 409) {
+				setErrors({ email: 'An account with this email already exists.' });
+			} else {
+				console.error('Error signing up:', error);
+				alert('Something went wrong. Please try again.');
+			}
+
 		}
 	};
 

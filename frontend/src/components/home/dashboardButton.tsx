@@ -3,17 +3,19 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 
 export type DashboardButtonProps = {
-
   icon?: React.ReactNode;
   children: React.ReactNode;
+  onClick?: () => void;
 };
 
 export default function DashboardButton({
   icon,
   children,
+  onClick,
 }: DashboardButtonProps) {
   return (
     <Button
+      onClick={onClick}
       className={`
         bg-sky-200 hover:bg-sky-400 
         border-2 border-black 

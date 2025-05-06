@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import AddressBar from '@/components/ui/addressBar';
 import DashboardButton from '@/components/home/dashboardButton';
 import ToolClusterLeft from '@/components/home/toolClusterLeft';
@@ -7,6 +8,8 @@ import ToolClusterRight from '@/components/home/toolClusterRight';
 import { UserCheck, Watch, Wrench, Wifi, Truck, Smartphone } from 'lucide-react';
 
 export default function HeroSection() {
+  const router = useRouter();
+
   return (
     <>
       <div className="pt-10">
@@ -18,6 +21,7 @@ export default function HeroSection() {
         <ToolClusterLeft />
 
         <DashboardButton
+          onClick={() => router.push('/dashboard/performer')}
           icon={
             <>
               <Wrench size={32} />
@@ -30,6 +34,7 @@ export default function HeroSection() {
         </DashboardButton>
 
         <DashboardButton
+          onClick={() => router.push('/dashboard/poster')}
           icon={
             <>
               <UserCheck size={32} />

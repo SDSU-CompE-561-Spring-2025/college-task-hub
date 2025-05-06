@@ -170,3 +170,9 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 .DS_Store
+
+# Ignore all .db files (e.g. SQLite databases)
+*.db
+
+# Ignore all .sql files (e.g. SQL dumps)
+*.sql

@@ -77,6 +77,13 @@ export default function ProfileCard({
 		};
 		fetchReviews();
 	}, [userId]);
+	
+	useEffect(() => {
+		if (skills) setUpdatedSkills(skills);
+		if (email) setUpdatedEmail(email);
+		if (phone_number) setUpdatedPhoneNumber(phone_number);
+		if (city) setUpdatedCity(city);
+	}, [skills, email, phone_number, city]);
 
 	//Used for overall rating in profile
 	const averageRating =
@@ -88,15 +95,14 @@ export default function ProfileCard({
 		console.log('Updating user ID:', userId);
 		try {
 			const updatedData = {
-				skills: adjustedSkills,
-				email: adjustedEmail,
-				phone_number: adjustedPhoneNumber,
-				city: adjustedCity,
+				skills: adjustedSkills ?? skills,
+				email: adjustedEmail ?? email,
+				phone_number: adjustedPhoneNumber ?? phone_number,
 				name: username,
-				roles: role,
-				rating: rating,
+				roles: role === 'Task Performer' ? 'performer' : 'poster',
+				rating: rating ?? 0,
 			};
-
+			console.log("Sending profile update:", updatedData);
 			await updateProfile(userId, updatedData);
 
 			if (selectedFile) {
@@ -194,7 +200,7 @@ export default function ProfileCard({
 						</div>
 					</div>
 					<p>
-						<span className="text-gray-700 text-lg font-semibold mb-2">Role:</span> {role}
+						<span className="text-gray-700 text-lg font-semibold mb-2">Role:</span> {viewerRole}
 					</p>
 
 					{/* Email and phone number are only openly displayed for task performers.*/}

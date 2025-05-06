@@ -10,7 +10,12 @@ export type ReviewPayload = {
 
 export const submitReview = async (data: ReviewPayload) => {
   try {
-    const response = await axios.post("http://localhost:8000/api/rating", data);
+    const token = localStorage.getItem('access_token');
+    const response = await axios.post("http://localhost:8000/api/rating", data,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error: any) {
     console.error("Failed to submit review:", error.response?.data || error.message);

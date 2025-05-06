@@ -8,6 +8,17 @@ import Layout from '@/components/layout/layout';
 //The contact information and reviews will be pop ups so no routing needed
 export default function ProfilePage() {
 	const [userData, setUserData] = useState<any>(null);
+	const [viewerRole, setViewerRole] = useState<"Task Performer" | "Task Poster">("Task Performer");
+
+	useEffect(() => {
+		const storedRole = localStorage.getItem("user_role");
+		console.log("Stored role from localStorage:", storedRole); 
+		if (storedRole === "performer") {
+		  setViewerRole("Task Performer");
+		} else if (storedRole === "poster") {
+		  setViewerRole("Task Poster");
+		}
+	  }, []);
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -43,8 +54,8 @@ export default function ProfilePage() {
 					city={userData.city}
 					role={userData.roles}
 					//Two switch between viewer roles edit this line
-					viewerRole="Task Performer"
-					//school = {userData.school}
+					//viewerRole="Task Performer"
+  					viewerRole={viewerRole}
 					reviews={userData.reviews}
 					email={userData.email}
 					phone_number={userData.phone_number}

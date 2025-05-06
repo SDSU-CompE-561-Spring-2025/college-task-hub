@@ -123,6 +123,7 @@ export default function JobPostForm() {
 			const response = await createTask(payload);
 			console.log('Task created successfully:', response);
 			alert('Task created successfully!');
+			form.reset();
 		} catch (error) {
 			console.error('Error creating task:', error);
 			alert('Error creating task. Please try again.');

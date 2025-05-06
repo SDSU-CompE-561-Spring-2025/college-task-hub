@@ -5,7 +5,12 @@ import { signIn } from '@/lib/api/users';
 import { UserSignIn } from '@/types/users';
 import { useRouter } from 'next/navigation';
 
-export default function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
+interface SignInFormProps {
+  onSuccess?: () => void;
+  role: 'performer' | 'poster'; // Accept role as a prop
+}
+
+export default function SignInForm({ onSuccess, role }: SignInFormProps) {
   const router = useRouter();
   const [formData, setFormData] = useState<UserSignIn>({
     email: '',
@@ -37,7 +42,7 @@ export default function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
       if (onSuccess) {
         onSuccess();
       }
-      router.push('/dashboard');
+      router.push(`/dashboard/${role}`);
     } catch (err: any) {
       console.error('Error signing in:', err);
       if (err.response?.status === 401) {

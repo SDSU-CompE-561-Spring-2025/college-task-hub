@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import {
 	Form,
@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/form';
 import { TaskCreate } from '@/types/task';
 import { createTask } from '@/lib/api/tasks';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,24 +24,41 @@ import {
 	SelectContent,
 	SelectItem,
 } from '@/components/ui/select';
+import { createLocation, fetchLocations } from '@/lib/api/locations';
 
-const JobPostForm = () => {
-	const formSchema = z.object({
-		title: z.string().min(1, 'Title is required'),
-		description: z.string().min(1, 'Description is required'),
-		price: z.coerce.number({
-			required_error: 'Price is required',
-			invalid_type_error: 'Price must be a number',
-		}),
-		status: z.enum(['unassigned', 'in-progress', 'completed']),
-		duration: z.string().min(1, 'Duration is required'),
-		avatar: z.string().optional(),
-		category: z.string().optional(),
-		user_id: z.number(),
-		location_id: z.number(),
-	});
+const locationSchema = z.object({
+	street: z.string().min(1, 'Street is required'),
+	city: z.string().min(1, 'City is required'),
+	state: z.string().min(1, 'State is required'),
+	zipcode: z.coerce.number({
+		required_error: 'ZIP code is required',
+		invalid_type_error: 'ZIP code must be a number',
+	}),
+});
 
-	const form = useForm<TaskCreate>({
+const formSchema = z.object({
+	title: z.string().min(1, 'Title is required'),
+	description: z.string().min(1, 'Description is required'),
+	price: z.coerce.number({
+		required_error: 'Price is required',
+		invalid_type_error: 'Price must be a number',
+	}),
+	status: z.enum(['unassigned', 'in-progress', 'completed']),
+	duration: z.string().min(1, 'Duration is required'),
+	avatar: z.string().optional(),
+	category: z.string().optional(),
+	user_id: z.number(),
+	location_id: z.number().optional(),
+	new_location: z.optional(locationSchema),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+export default function JobPostForm() {
+	const [locations, setLocations] = useState<{ id: number; label: string }[]>([]);
+	const [adding, setAdding] = useState(false);
+
+	const form = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			title: '',
@@ -49,27 +66,61 @@ const JobPostForm = () => {
 			price: 0,
 			status: 'unassigned',
 			duration: '',
-			avatar: '', // Add avatar URL if available
-			category: '', // Add category if available
-			user_id: 1, // Replace with actual user ID
-			location_id: 1, // Replace with actual location ID
+			avatar: '',
+			category: '',
+			user_id: 1,
+			location_id: undefined,
+			new_location: undefined,
 		},
 	});
 
-	const onSubmit = async (data: TaskCreate) => {
+	const selectedLoc = useWatch({
+		control: form.control,
+		name: 'location_id',
+	});
+
+	useEffect(() => {
+		const load = async () => {
+			try {
+				const data = await fetchLocations();
+				setLocations(
+					data.map((loc) => ({
+						id: loc.id,
+						label: `${loc.street}, ${loc.city}`,
+					}))
+				);
+			} catch (e) {
+				console.error('Error fetching locations:', e);
+			}
+		};
+		load();
+	}, []);
+
+	const onSubmit = async (data: FormValues) => {
 		try {
-			const payload = {
+			let locationId = data.location_id;
+
+			if (adding && data.new_location) {
+				const newLocation = await createLocation(data.new_location);
+				locationId = newLocation.id;
+			}
+			const payload: any = {
 				title: data.title,
 				description: data.description,
 				price: data.price,
-				status: 'unassigned',
+				status: data.status,
 				duration: data.duration,
-				avatar: '', // Add avatar URL if available
+				avatar: data.avatar,
 				category: data.category,
-				user_id: 1, // Replace with actual user ID
-				location_id: 1, // Replace with actual location ID
+				user_id: data.user_id,
+				location_id: locationId,
 			};
-			const response = await createTask(data);
+			if (adding && data.new_location) {
+				payload.new_location = data.new_location;
+			} else if (data.location_id) {
+				payload.location_id = data.location_id;
+			}
+			const response = await createTask(payload);
 			console.log('Task created successfully:', response);
 			alert('Task created successfully!');
 		} catch (error) {
@@ -160,8 +211,11 @@ const JobPostForm = () => {
 							<FormLabel>Rate</FormLabel>
 							<FormControl>
 								<Input
+									type="number"
+									step="0.01"
+									min="0"
 									className="border-0 border-b"
-									placeholder="$20/hr or flat rate"
+									placeholder="20.00"
 									{...field}
 								/>
 							</FormControl>
@@ -194,13 +248,84 @@ const JobPostForm = () => {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Location</FormLabel>
-							<FormControl>
-								<Input
-									className="border-0 border-b"
-									placeholder="e.g. 123 Main St, San Diego, CA"
-									{...field}
-								/>
-							</FormControl>
+							{locations.length > 0 && (
+								<div className="mb-4 space-y-1 text-sm text-gray-700">
+									<p className="font-medium">Saved Locations:</p>
+									{locations.map((loc) => (
+										<button
+											type="button"
+											key={loc.id}
+											onClick={() => {
+												setAdding(false);
+												form.setValue('location_id', loc.id);
+											}}
+											className={`flex items-center gap-1 text-left w-full px-2 py-1 rounded-md hover:bg-sky-100 ${
+												selectedLoc === loc.id ? 'bg-sky-200 font-semibold' : ''
+											}`}
+										>
+											<span
+												role="img"
+												aria-label="pin"
+											>
+												📍
+											</span>{' '}
+											{loc.label}
+										</button>
+									))}
+								</div>
+							)}
+
+							<Select
+								value={adding ? 'add_new' : (field.value?.toString() ?? '')}
+								onValueChange={(val) => {
+									if (val === 'add_new') {
+										setAdding(true);
+										form.setValue('location_id', undefined);
+									} else {
+										setAdding(false);
+										form.setValue('location_id', Number(val));
+									}
+								}}
+							>
+								<FormControl>
+									<SelectTrigger className="border-0 border-b w-64">
+										<SelectValue placeholder="Select a location or add new" />
+									</SelectTrigger>
+								</FormControl>
+								<SelectContent>
+									{locations.map((loc) => (
+										<SelectItem
+											key={loc.id}
+											value={loc.id.toString()}
+										>
+											{loc.label}
+										</SelectItem>
+									))}
+									<SelectItem value="add_new">+ Add New Location</SelectItem>
+								</SelectContent>
+							</Select>
+
+							{adding && (
+								<div className="mt-4 grid grid-cols-1 gap-4 w-64">
+									<Input
+										placeholder="Street"
+										{...form.register('new_location.street')}
+									/>
+									<Input
+										placeholder="City"
+										{...form.register('new_location.city')}
+									/>
+									<Input
+										placeholder="State"
+										{...form.register('new_location.state')}
+									/>
+									<Input
+										placeholder="ZIP"
+										{...form.register('new_location.zipcode')}
+									/>
+								</div>
+							)}
+
 							<FormMessage />
 						</FormItem>
 					)}
@@ -210,6 +335,4 @@ const JobPostForm = () => {
 			</form>
 		</Form>
 	);
-};
-
-export default JobPostForm;
+}

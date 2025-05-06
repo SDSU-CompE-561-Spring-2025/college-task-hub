@@ -9,7 +9,11 @@ class Settings(BaseSettings):
     """
     Settings class to hold configuration values loaded from the .env file.
     """
-    DATABASE_URL: str
+    USER: str
+    PASSWORD: str
+    HOST: str
+    PORT: str
+    DBNAME: str
     SECRET_KEY: str
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")

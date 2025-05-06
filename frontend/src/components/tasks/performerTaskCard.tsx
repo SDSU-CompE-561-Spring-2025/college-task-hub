@@ -26,9 +26,9 @@ const PerformerTaskCard: React.FC<TaskCardProps> = ({ task }) => {
 							<div className="text-xl">{task.avatar}</div>
 							<div className="font-medium">{task.title}</div>
 						</div>
-						<div className="flex justify-between text-sm text-gray-600">
+						<div className="px-2 flex justify-between text-sm text-gray-600">
 							<span>{task.description}</span>
-							<span>{task.price}</span>
+							<span>${task.price}</span>
 						</div>
 					</CardContent>
 				</Card>

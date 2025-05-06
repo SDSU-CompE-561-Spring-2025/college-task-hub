@@ -47,7 +47,7 @@ export function SignInDialog({
 					setRole={setRole}
 				/>
 
-				<SignInForm onSuccess={() => setOpen(false)} />
+				<SignInForm role={role} onSuccess={() => setOpen(false)} />
 			</DialogContent>
 		</Dialog>
 	);

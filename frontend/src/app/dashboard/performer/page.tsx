@@ -9,6 +9,7 @@ import { fetchTasks } from '@/lib/api/tasks';
 import { TaskType } from '@/types/task';
 
 const categories = [
+	'None',
 	'Caregiving',
 	'Creative & DIY',
 	'Education',
@@ -44,7 +45,10 @@ const PerformerDashboardPage = () => {
 	return (
 		<Layout>
 			<div className="flex min-h-screen mt-4">
-				<SuggestionsBar categories={categories} />
+				<SuggestionsBar
+					categories={categories}
+					onCategorySelect={(category) => setSelectedCategory(category)}
+				/>
 
 				<main className="flex-1 p-6 space-y-6">
 					<SearchBar />

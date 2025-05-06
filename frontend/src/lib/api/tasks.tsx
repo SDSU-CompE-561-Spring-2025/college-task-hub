@@ -5,7 +5,9 @@ import { TaskType, TaskCreate } from '@/types/task';
 export const fetchTasks = async (category?: string): Promise<TaskType[]> => {
 	const token = localStorage.getItem('access_token');
 	const url = new URL(`http://localhost:8000/api/task`);
-	if (category) url.searchParams.append('category', category);
+	if (category) {
+		url.searchParams.append('category', category);
+	}
 
 	const response = await axios.get(url.toString(), {
 		headers: {

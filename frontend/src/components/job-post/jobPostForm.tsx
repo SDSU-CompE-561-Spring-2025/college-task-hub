@@ -17,6 +17,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { z } from 'zod';
+import {
+	Select,
+	SelectTrigger,
+	SelectValue,
+	SelectContent,
+	SelectItem,
+} from '@/components/ui/select';
 
 const JobPostForm = () => {
 	const formSchema = z.object({
@@ -101,13 +108,28 @@ const JobPostForm = () => {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Category</FormLabel>
-							<FormControl>
-								<Input
-									className="border-0 border-b"
-									placeholder="e.g. Labor"
-									{...field}
-								/>
-							</FormControl>
+							<Select
+								onValueChange={field.onChange}
+								defaultValue={field.value}
+							>
+								<FormControl>
+									<SelectTrigger className="border-0 border-b">
+										<SelectValue placeholder="Select a category" />
+									</SelectTrigger>
+								</FormControl>
+								<SelectContent>
+									<SelectItem value="Caregiving">Caregiving</SelectItem>
+									<SelectItem value="Creative & DIY">Creative & DIY</SelectItem>
+									<SelectItem value="Education">Education</SelectItem>
+									<SelectItem value="Errands">Errands</SelectItem>
+									<SelectItem value="Home & Garden">Home & Garden</SelectItem>
+									<SelectItem value="Labor">Labor</SelectItem>
+									<SelectItem value="Pet Care">Pet Care</SelectItem>
+									<SelectItem value="Repairs">Repairs</SelectItem>
+									<SelectItem value="Transport">Transport</SelectItem>
+									<SelectItem value="None">None</SelectItem>
+								</SelectContent>
+							</Select>
 							<FormMessage />
 						</FormItem>
 					)}

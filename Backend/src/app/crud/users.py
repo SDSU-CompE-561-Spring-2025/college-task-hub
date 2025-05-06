@@ -11,6 +11,11 @@ from app.schema.users import UsersUpdate
 
 # (Create) Create new user in the database
 def create_user(db: Session, user_data: UsersCreate):
+    # check for whether or not user email already exists in db
+    existing_user = db.query(Users).filter(Users.email == user_data.email).first()
+    if existing_user:
+        raise HTTPException(status_code=409, detail="There is already an account associated with that email.")
+
     hashed_pass = get_password_hash(user_data.password)
 
     db_user = Users(

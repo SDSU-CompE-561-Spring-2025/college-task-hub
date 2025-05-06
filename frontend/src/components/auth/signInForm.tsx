@@ -19,6 +19,19 @@ export default function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
 		e.preventDefault();
 		try {
 			const response = await signIn(formData);
+			const token = response.access_token; 
+			localStorage.setItem('access_token', token); 
+
+			const res = await fetch('http://localhost:8000/api/user/me', {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+			const userData = await res.json();  
+
+			localStorage.setItem('user_id', userData.id.toString());
+			console.log("Logged in as user:", userData);  
+			
 			console.log('User signed in successfully:', response);
 			if (onSuccess) {
 				onSuccess(); // Call the onSuccess callback if provided

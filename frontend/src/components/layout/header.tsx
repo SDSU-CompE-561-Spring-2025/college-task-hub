@@ -1,18 +1,29 @@
 'use client';
 
 import React from 'react';
+import { useState, useEffect } from "react";
 import { usePathname } from 'next/navigation';
 import HeaderButton from './headerButton';
 
 const Header = () => {
 	const pathname = usePathname();
 	const isActive = (href: string): boolean => pathname === href;
+	
+	const [userId, setUserId] = useState<number | null>(null);
+
+	useEffect(() => {
+		const id = localStorage.getItem("user_id");
+		if (id) {
+			setUserId(Number(id));
+		}
+	}, []);
 
 	const navLinks = [
 		{ name: 'Home', href: '/' },
 		{ name: 'Dashboard', href: '/dashboard' },
 		{ name: 'Job Post', href: '/job-post' },
-		{ name: 'Profile', href: '/profile' },
+		//{ name: 'Profile', href: '/profile' },
+		{ name: 'Profile', href: userId ? `/profile/${userId}` : '/profile' }, 
 	];
 
 	return (

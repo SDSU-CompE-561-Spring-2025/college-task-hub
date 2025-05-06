@@ -5,7 +5,7 @@ export type ReviewPayload = {
   comment: string;
   giver_id: number;
   receiver_id: number;
-  job_title: string;
+  created_at?: string;
 };
 
 export const submitReview = async (data: ReviewPayload) => {

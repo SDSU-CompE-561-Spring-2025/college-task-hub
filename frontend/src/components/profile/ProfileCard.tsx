@@ -17,6 +17,7 @@ interface Review {
 
 interface ProfileCardProps {
 	userId: number;
+	loggedInUserId: number; 
 	username: string;
 	profilePictureUrl: string;
 	skills: string;
@@ -28,10 +29,12 @@ interface ProfileCardProps {
 	email: string;
 	phone_number: string;
 	viewerRole: 'Task Performer' | 'Task Poster';
+	
 }
 
 export default function ProfileCard({
 	userId,
+	loggedInUserId,
 	username = 'No username provided',
 	profilePictureUrl = 'https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-female-user-profile-vector-illustration-isolated-background-women-profile-sign-business-concept_157943-38866.jpg?semt=ais_hybrid&w=740',
 	skills = 'No skills provided',
@@ -60,7 +63,7 @@ export default function ProfileCard({
 	const [adjustedCity, setUpdatedCity] = useState('');
 	const [fetchedReviews, setFetchedReviews] = useState<Review[]>([]);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
+	const [photoTimestamp, setPhotoTimestamp] = useState(Date.now());
 	//Top skills are the first three skills in the list
 	const allSkills = (adjustedSkills || '').split(',').map((skill) => skill.trim());
 	const topSkills = allSkills.slice(0, 3);
@@ -117,6 +120,7 @@ export default function ProfileCard({
 						},
 					}
 				);
+				setPhotoTimestamp(Date.now());
 			}
 
 			alert('Profile updated successfully!');
@@ -125,7 +129,7 @@ export default function ProfileCard({
 			alert('Failed to update profile.');
 		}
 	};
-
+	console.log("userId being passed to LeaveReview:", userId);
 	return (
 		<div className="relative w-full max-w-4xl p-8 rounded-lg shadow-md mx-auto border-2 border-black">
 			{/* Contact & review buttons only show for the task posters*/}
@@ -136,13 +140,20 @@ export default function ProfileCard({
 						phone_number={phone_number}
 					/>
 				)}
-				{viewerRole === 'Task Poster' && <LeaveReview />}
+				{viewerRole === 'Task Poster' && (
+					<LeaveReview
+					receiverId={userId}
+					giverId={loggedInUserId}
+    				onReviewSubmit={(newReview) => setFetchedReviews((prev) => [...prev, newReview])
+					}
+					/>
+				)}
 			</div>
 
 			{/* Profile info */}
 			<div className="flex items-center mb-8 space-x-8">
 				<img
-					src={`http://localhost:8000/media/profile_images/${userId}.jpg?${new Date().getTime()}`}
+					src={`http://localhost:8000/media/profile_images/${userId}.jpg?${photoTimestamp}`}
 					onError={(e) => {
 						// If image doesn't exist, use the default
 						(e.target as HTMLImageElement).src =

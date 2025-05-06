@@ -5,11 +5,12 @@ interface TaskCardProps {
     taskName: string;
     section?: string;
     profilePicUrl?: string;
+    description?: string;
 }
 
-export default function TaskCard({ taskName, section, profilePicUrl }: TaskCardProps) {
+export default function TaskCard({ taskName, section, profilePicUrl, description }: TaskCardProps) {
   return (
-    <div className="min-w-[200px] min-h-[150px] p-4 bg-gray-200 rounded-2xl hover:shadow-lg transition-shadow">
+    <div className="w-[200px] h-[150px] p-4 bg-gray-200 rounded-2xl hover:shadow-lg transition-shadow flex flex-col overflow-hidden">
       <div className="flex items-center gap-20 mb-2">
         <h2 className="text-lg font-medium">{taskName}</h2>
         {profilePicUrl && (
@@ -20,7 +21,7 @@ export default function TaskCard({ taskName, section, profilePicUrl }: TaskCardP
           />
         )}
       </div>
-      {section && <p className="text-sm text-gray-500">Task Desc</p>}
+      {description && <p className="text-sm text-gray-500 break-words text-ellipsis w-full overflow-hidden">{description}</p>}
     </div>
   );
 }

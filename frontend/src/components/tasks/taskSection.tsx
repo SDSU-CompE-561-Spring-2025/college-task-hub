@@ -14,7 +14,7 @@ interface TaskSectionProps {
 const TaskSection: React.FC<TaskSectionProps> = ({ title, tasks, setTasks }) => {
 	return (
 		<div className="w-6/10 my-4">
-			<h1 className="font-semibold">{title}</h1>
+			<h1 className="font-semibold mb-4">{title}</h1>
 			<ScrollArea className="w-full whitespace-nowrap">
 				<div className="flex gap-12 pb-2">
 					{tasks.map((task, index) => (
@@ -23,6 +23,7 @@ const TaskSection: React.FC<TaskSectionProps> = ({ title, tasks, setTasks }) => 
 							taskName={task.title}
 							section={task.title}
 							profilePicUrl={task.avatar}
+							description={task.description}
 						/>
 					))}
 				</div>

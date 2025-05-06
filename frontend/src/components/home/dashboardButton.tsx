@@ -3,18 +3,16 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 
 export type DashboardButtonProps = {
-
-  icon?: React.ReactNode;
-  children: React.ReactNode;
+	icon?: React.ReactNode;
+	children: React.ReactNode;
+	onClick?: () => void;
 };
 
-export default function DashboardButton({
-  icon,
-  children,
-}: DashboardButtonProps) {
-  return (
-    <Button
-      className={`
+export default function DashboardButton({ icon, children, onClick }: DashboardButtonProps) {
+	return (
+		<Button
+			onClick={onClick}
+			className={`
         bg-sky-200 hover:bg-sky-400 
         border-2 border-black 
         rounded-lg 
@@ -23,11 +21,9 @@ export default function DashboardButton({
         space-y-1 
         cursor-pointer
       `}
-    >
-      {icon && <div className="flex flex-row space-x-2 text-black max-w-none">{icon}</div>}
-      <span className="flex-none text-sky-500 font-bold text-xl">
-        {children}
-      </span>
-    </Button>
-  );
+		>
+			{icon && <div className="flex flex-row space-x-2 text-black max-w-none">{icon}</div>}
+			<span className="flex-none text-sky-500 font-bold text-xl">{children}</span>
+		</Button>
+	);
 }

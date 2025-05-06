@@ -7,7 +7,7 @@ class UsersBase(BaseModel):
     skills: str | None = None
     roles: str | None = None
     rating: int | None = None
-    phone_number: str
+    phone_number: str | None = None
 
 
 class UsersCreate(BaseModel):
@@ -37,7 +37,7 @@ class UsersUpdate(BaseModel):
     name: str
     roles: str
     email: EmailStr
-    phone_number: str
+    phone_number: str | None = None
     rating: float
 
 class ReviewIn(BaseModel):

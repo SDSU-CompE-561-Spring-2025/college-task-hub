@@ -35,19 +35,22 @@ export const createTask = async (task: TaskCreate): Promise<TaskType> => {
 };
 
 // Update Task Componet
-export const updateTask = async (id: number, task: TaskCreate): Promise<TaskType> => {
-	const token = localStorage.getItem('access_token');
-	const response = await axios.put(`http://localhost:8000/api/task/${id}`, task, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	if (response.status !== 200) {
-		throw new Error('Failed to update task');
-	}
-	return response.data;
+export const updateTaskStatus = async (taskId: number, status: string): Promise<TaskType> => {
+    const token = localStorage.getItem('access_token');
+    const response = await axios.put(
+        `http://localhost:8000/api/task/${taskId}/status`,
+        { status },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+    if (response.status !== 200) {
+        throw new Error('Failed to update task status');
+    }
+    return response.data;
 };
-
 // Delete Task component
 export const deleteTask = async (id: number): Promise<void> => {
 	const token = localStorage.getItem('access_token');

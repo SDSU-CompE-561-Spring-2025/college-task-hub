@@ -7,6 +7,7 @@ import SearchBar from '@/components/tasks/taskSearchBar';
 import TaskSuggestions from '@/components/tasks/taskSuggestions';
 import { fetchTasks } from '@/lib/api/tasks';
 import { TaskType } from '@/types/task';
+import axios from 'axios';
 
 const categories = [
 	'None',
@@ -26,10 +27,21 @@ const PerformerDashboardPage = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+	const [userId, setUserId] = useState<number | null>(null);
 
 	useEffect(() => {
-		const loadTasks = async () => {
+		const fetchUserAndTasks = async () => {
 			try {
+				// Fetch user data
+				const token = localStorage.getItem('access_token');
+				const response = await axios.get('http://localhost:8000/api/user/me', {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				});
+				setUserId(response.data.id);  // Store userId
+
+				// Fetch tasks
 				const data = await fetchTasks(selectedCategory || undefined);
 				setTasks(data);
 			} catch (err) {
@@ -39,7 +51,7 @@ const PerformerDashboardPage = () => {
 			}
 		};
 
-		loadTasks();
+		fetchUserAndTasks();
 	}, [selectedCategory]);
 
 	return (
@@ -54,7 +66,8 @@ const PerformerDashboardPage = () => {
 					<SearchBar />
 					{loading && <p>Loading tasks...</p>}
 					{error && <p className="text-red-500">{error}</p>}
-					{!loading && !error && <TaskSuggestions tasks={tasks} />}
+					{/* Only render TaskSuggestions if userId is not null */}
+					{!loading && !error && userId !== null && <TaskSuggestions tasks={tasks} loggedInUserId={userId} />}
 				</main>
 			</div>
 		</Layout>

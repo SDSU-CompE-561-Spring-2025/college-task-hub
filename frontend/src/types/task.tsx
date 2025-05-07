@@ -13,4 +13,5 @@ export type TaskCreate = {
 export type TaskType = TaskCreate & {
 	id: number;
 	created_at: string;
+	hasApplied?: boolean;
 };

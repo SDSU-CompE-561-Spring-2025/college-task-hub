@@ -4,9 +4,10 @@ import { TaskCreate, TaskType } from '@/types/task';
 
 type TaskSuggestionsProps = {
 	tasks: TaskType[];
+	loggedInUserId: number;
 };
 
-const TaskSuggestions: React.FC<TaskSuggestionsProps> = ({ tasks }) => {
+const TaskSuggestions: React.FC<TaskSuggestionsProps> = ({ tasks, loggedInUserId }) => {
 	return (
 		<section className="mt-12">
 			<h2 className="text-2xl font-bold mb-6">Task Suggestions</h2>
@@ -15,6 +16,7 @@ const TaskSuggestions: React.FC<TaskSuggestionsProps> = ({ tasks }) => {
 					<PerformerTaskCard
 						key={task.id}
 						task={task}
+						userId={loggedInUserId}
 					/>
 				))}
 			</div>

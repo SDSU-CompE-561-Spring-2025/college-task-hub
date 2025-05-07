@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useState, useEffect } from "react";
+import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import HeaderButton from './headerButton';
@@ -12,15 +12,6 @@ import clsx from 'clsx';
 const Header = () => {
 	const pathname = usePathname();
 	const isActive = (href: string): boolean => pathname === href;
-	
-	const [userId, setUserId] = useState<number | null>(null);
-
-	useEffect(() => {
-		const id = localStorage.getItem("user_id");
-		if (id) {
-			setUserId(Number(id));
-		}
-	}, []);
 
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 	const [role, setRole] = useState<'performer' | 'poster'>('performer'); // default to 'performer'

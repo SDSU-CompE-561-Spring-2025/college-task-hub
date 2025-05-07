@@ -6,20 +6,7 @@ import { Input } from "@/components/ui/input";
 import {MessageCircle,CheckSquare, X } from "lucide-react";
 import { submitReview } from "@/lib/api/submitReview";
 
-interface Review {
-  reviewerName: string;
-  reviewerProfilePicture: string;
-  rating: number;
-  comment: string;
-  jobTitle: string;
-}
-
-interface LeaveReviewProps {
-  receiverId: number;
-  onReviewSubmit: (review: Review) => void;
-}
-
-export default function LeaveReview({ receiverId, onReviewSubmit }: LeaveReviewProps) {
+export default function LeaveReview() {
 
   {/* Manages the rating */}
   const [rating, setRating] = useState(0);
@@ -30,30 +17,18 @@ export default function LeaveReview({ receiverId, onReviewSubmit }: LeaveReviewP
   
   
   const handleSubmit = async () => {
-    const backendReview = {
-      //reviewerName: name,
-      //reviewerProfilePicture: `https://randomuser.me/api/portraits/${Math.random() < 0.5 ? "men" : "women"}/${Math.floor(Math.random() * 100)}.jpg`,
+    const review = {
+      reviewerName: name,
+      reviewerProfilePicture: `https://randomuser.me/api/portraits/${Math.random() < 0.5 ? "men" : "women"}/${Math.floor(Math.random() * 100)}.jpg`,
       job_title: taskCompleted,
       rating,
       comment,
-      giver_id: 2,      
-      receiver_id: receiverId, 
-      created_at: new Date().toISOString() 
+      giver_id: 2,      // TODO: get from logged-in user
+      receiver_id: 1,   // TODO: get from profile being viewed
     };
-
-    // Convert the backend review to the frontend review format for jobTitle vs job_title
-    const frontendReview: Review = {
-      reviewerName: name,
-      reviewerProfilePicture: `https://randomuser.me/api/portraits/${Math.random() < 0.5 ? "men" : "women"}/${Math.floor(Math.random() * 100)}.jpg`,
-      jobTitle: taskCompleted, 
-      rating,
-      comment,
-    };
-
+  
     try {
-      console.log("Sending review payload:", backendReview);
-      await submitReview(backendReview);
-      onReviewSubmit(frontendReview);
+      await submitReview(review);
       alert("Review submitted!");
       setOpen(false); 
     } catch (err) {

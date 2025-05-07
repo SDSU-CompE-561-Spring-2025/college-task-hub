@@ -18,8 +18,6 @@ async def create_rating(rating_data: RatingsCreate, db: Session = Depends(get_db
     Returns: A success message indicating the rating was created.
     """
     logger.info('Creating new rating')
-    if rating_data.created_at is None:
-        rating_data.created_at = datetime.utcnow()
     return crud_ratings.create_rating(db=db, rating_data=rating_data)
 
 @router.get("/rating/{rating_id}",response_model=RatingsResponse)

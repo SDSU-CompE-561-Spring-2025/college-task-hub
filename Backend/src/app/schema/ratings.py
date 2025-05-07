@@ -5,7 +5,7 @@ from typing import Optional
 class RatingsBase(BaseModel):
     rating: int
     comment: str | None = None
-    created_at: Optional[datetime] = None
+    created_at: datetime
     giver_id: int
     receiver_id: int
 

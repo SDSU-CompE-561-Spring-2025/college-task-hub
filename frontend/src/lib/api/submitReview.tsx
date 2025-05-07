@@ -5,17 +5,12 @@ export type ReviewPayload = {
   comment: string;
   giver_id: number;
   receiver_id: number;
-  created_at?: string;
+  job_title: string;
 };
 
 export const submitReview = async (data: ReviewPayload) => {
   try {
-    const token = localStorage.getItem('access_token');
-    const response = await axios.post("http://localhost:8000/api/rating", data,{
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.post("http://localhost:8000/api/rating", data);
     return response.data;
   } catch (error: any) {
     console.error("Failed to submit review:", error.response?.data || error.message);

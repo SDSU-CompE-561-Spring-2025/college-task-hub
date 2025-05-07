@@ -17,7 +17,6 @@ interface Review {
 
 interface ProfileCardProps {
 	userId: number;
-	loggedInUserId: number; 
 	username: string;
 	profilePictureUrl: string;
 	skills: string;
@@ -29,12 +28,10 @@ interface ProfileCardProps {
 	email: string;
 	phone_number: string;
 	viewerRole: 'Task Performer' | 'Task Poster';
-	
 }
 
 export default function ProfileCard({
 	userId,
-	loggedInUserId,
 	username = 'No username provided',
 	profilePictureUrl = 'https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-female-user-profile-vector-illustration-isolated-background-women-profile-sign-business-concept_157943-38866.jpg?semt=ais_hybrid&w=740',
 	skills = 'No skills provided',
@@ -63,7 +60,7 @@ export default function ProfileCard({
 	const [adjustedCity, setUpdatedCity] = useState('');
 	const [fetchedReviews, setFetchedReviews] = useState<Review[]>([]);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
-	const [photoTimestamp, setPhotoTimestamp] = useState(Date.now());
+
 	//Top skills are the first three skills in the list
 	const allSkills = (adjustedSkills || '').split(',').map((skill) => skill.trim());
 	const topSkills = allSkills.slice(0, 3);
@@ -80,13 +77,6 @@ export default function ProfileCard({
 		};
 		fetchReviews();
 	}, [userId]);
-	
-	useEffect(() => {
-		if (skills) setUpdatedSkills(skills);
-		if (email) setUpdatedEmail(email);
-		if (phone_number) setUpdatedPhoneNumber(phone_number);
-		if (city) setUpdatedCity(city);
-	}, [skills, email, phone_number, city]);
 
 	//Used for overall rating in profile
 	const averageRating =
@@ -98,14 +88,15 @@ export default function ProfileCard({
 		console.log('Updating user ID:', userId);
 		try {
 			const updatedData = {
-				skills: adjustedSkills ?? skills,
-				email: adjustedEmail ?? email,
-				phone_number: adjustedPhoneNumber ?? phone_number,
+				skills: adjustedSkills,
+				email: adjustedEmail,
+				phone_number: adjustedPhoneNumber,
+				city: adjustedCity,
 				name: username,
-				roles: role === 'Task Performer' ? 'performer' : 'poster',
-				rating: rating ?? 0,
+				roles: role,
+				rating: rating,
 			};
-			console.log("Sending profile update:", updatedData);
+
 			await updateProfile(userId, updatedData);
 
 			if (selectedFile) {
@@ -120,7 +111,6 @@ export default function ProfileCard({
 						},
 					}
 				);
-				setPhotoTimestamp(Date.now());
 			}
 
 			alert('Profile updated successfully!');
@@ -129,7 +119,7 @@ export default function ProfileCard({
 			alert('Failed to update profile.');
 		}
 	};
-	console.log("userId being passed to LeaveReview:", userId);
+
 	return (
 		<div className="relative w-full max-w-4xl p-8 rounded-lg shadow-md mx-auto border-2 border-black">
 			{/* Contact & review buttons only show for the task posters*/}
@@ -140,20 +130,13 @@ export default function ProfileCard({
 						phone_number={phone_number}
 					/>
 				)}
-				{viewerRole === 'Task Poster' && (
-					<LeaveReview
-					receiverId={userId}
-					giverId={loggedInUserId}
-    				onReviewSubmit={(newReview) => setFetchedReviews((prev) => [...prev, newReview])
-					}
-					/>
-				)}
+				{viewerRole === 'Task Poster' && <LeaveReview />}
 			</div>
 
 			{/* Profile info */}
 			<div className="flex items-center mb-8 space-x-8">
 				<img
-					src={`http://localhost:8000/media/profile_images/${userId}.jpg?${photoTimestamp}`}
+					src={`http://localhost:8000/media/profile_images/${userId}.jpg?${new Date().getTime()}`}
 					onError={(e) => {
 						// If image doesn't exist, use the default
 						(e.target as HTMLImageElement).src =
@@ -211,7 +194,7 @@ export default function ProfileCard({
 						</div>
 					</div>
 					<p>
-						<span className="text-gray-700 text-lg font-semibold mb-2">Role:</span> {viewerRole}
+						<span className="text-gray-700 text-lg font-semibold mb-2">Role:</span> {role}
 					</p>
 
 					{/* Email and phone number are only openly displayed for task performers.*/}

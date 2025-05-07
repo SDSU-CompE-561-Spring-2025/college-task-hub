@@ -32,6 +32,8 @@ class UsersResponse(UsersBase):
 #Adding UsersUpdate for profile updates
 class UsersUpdate(BaseModel):
     skills: str | None = None
+    email: EmailStr
+    phone_number: str
     name: str
     roles: str
     email: EmailStr

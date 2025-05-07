@@ -8,6 +8,8 @@ from app.core.auth import get_current_user
 from app.models.users import Users
 from app.models.tasks import Tasks
 from typing import List, Optional
+from app.models.applications import Applications
+from app.schema.applications import ApplicationResponse
 
 router = APIRouter()
 
@@ -71,3 +73,10 @@ async def delete_task(task_id: int, db: Session = Depends(get_db), current_user:
     """
     logger.info('Deleting task')
     return crud_tasks.delete_task(db=db, task_id=task_id)
+
+@router.get("/tasks/{task_id}/applications", response_model=List[ApplicationResponse])
+def get_applications_for_task(task_id: int, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+    """
+    Get all applications submitted for a specific task.
+    """
+    return db.query(Applications).filter(Applications.task_id == task_id).all()

@@ -1,12 +1,11 @@
 from fastapi import FastAPI
 from app.core.database import Base, engine
-from app.routers import users, locations, tasks, notifications, ratings
+from app.routers import users, locations, tasks, notifications, ratings, applications
 from fastapi.middleware.cors import CORSMiddleware
 from app.middleware.logger import logger
 from app.middleware.logging_middleware import LoggingMiddleware
 import os
 from fastapi.staticfiles import StaticFiles
-from app.routers import users
 
 
 Base.metadata.create_all(bind=engine) # Create tables
@@ -35,6 +34,7 @@ app.include_router(locations.router, prefix="/api", tags=["locations"])
 app.include_router(tasks.router, prefix="/api", tags=["tasks"])
 app.include_router(notifications.router, prefix="/api", tags=["notifications"])
 app.include_router(ratings.router, prefix="/api", tags=["ratings"])
+app.include_router(applications.router, prefix="/api", tags=["applications"])
 
 @app.get("/")
 def root():

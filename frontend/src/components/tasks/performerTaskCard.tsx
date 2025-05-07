@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	Dialog,
 	DialogTrigger,
@@ -14,9 +14,51 @@ import { TaskType } from '@/types/task';
 
 interface TaskCardProps {
 	task: TaskType;
+	userId: number;
 }
 
-const PerformerTaskCard: React.FC<TaskCardProps> = ({ task }) => {
+const PerformerTaskCard: React.FC<TaskCardProps> = ({ task, userId }) => {
+
+	const [hasApplied, setHasApplied] = useState(task.hasApplied);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null); 
+
+	const apply = async () => {
+		setLoading(true);
+		setError(null);
+	
+		try {
+			const token = localStorage.getItem('access_token'); 
+	
+			if (!token) {
+				setError('You must be logged in to apply.');
+				setLoading(false);
+				return;
+			}
+	
+			const res = await fetch('http://localhost:8000/api/application', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({ task_id: task.id }),
+			});
+	
+			if (res.ok || res.status === 409) {
+				setHasApplied(true);
+			} else {
+				const message = await res.text();
+				setError(`Failed to apply: ${message}`);
+			}
+		} catch (err) {
+			setError('Error applying. Please try again later.');
+			console.error(err);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -46,6 +88,28 @@ const PerformerTaskCard: React.FC<TaskCardProps> = ({ task }) => {
 					<span>Duration: {task.duration}</span>
 					<span>Rate: {task.price}</span>
 				</div>
+
+				{/* Display error message if there is one */}
+				{error && <div className="text-red-500 mt-4">{error}</div>}
+
+				<div className="flex justify-end mt-6">
+        		  	{hasApplied ? (
+        		  	  	<button
+        		  	  	  	className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+        		  	  	  	disabled
+        		  	  	>
+        		  	  	  	Application sent
+        		  	  	</button>
+        		  			) : (
+        		  	  	<button
+        		  	  	  	onClick={apply}
+        		  	  	  	disabled={loading}
+        		  	  	  	className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        		  	  	>
+        		  	  	  	{loading ? 'Applying…' : 'Apply'}
+        		  	  	</button>
+        		  	)}
+        		</div>
 			</DialogContent>
 		</Dialog>
 	);

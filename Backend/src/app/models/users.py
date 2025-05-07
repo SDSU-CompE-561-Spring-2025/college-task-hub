@@ -28,3 +28,6 @@ class Users(Base):
                                         foreign_keys="Ratings.receiver_id")
     # Reference tasks.py
     tasks_users_child = relationship("Tasks", back_populates="tasks_users_parent")
+
+    # applications reference
+    applications = relationship("Applications", back_populates="performer", cascade="all, delete-orphan")

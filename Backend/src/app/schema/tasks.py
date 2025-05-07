@@ -19,6 +19,7 @@ class TasksCreate(TasksBase):
 class TasksResponse(TasksBase):
     id: int
     created_at: datetime
+    has_applied: bool = False
 
     class Config:
         from_attributes = True

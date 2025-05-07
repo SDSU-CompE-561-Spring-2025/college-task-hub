@@ -11,6 +11,7 @@ const HomeHeader = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const handleLogout = () => {
 		localStorage.removeItem('access_token');
+		localStorage.removeItem("user_role");
 		setIsLoggedIn(false);
 		router.push('/');
 	};

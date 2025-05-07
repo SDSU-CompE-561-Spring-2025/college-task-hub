@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Backend/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app  # Mount your FastAPI code (optional for hot reloading)
+    environment:
+      - PYTHONPATH=/app
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/frontend  # Mount your Next.js code (optional for hot reloading)
+    environment:
+    - NEXT_DISABLE_TURBOPACK=true

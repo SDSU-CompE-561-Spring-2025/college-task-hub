@@ -33,3 +33,6 @@ class Tasks(Base):
     # Reference locations.py
     tasks_location_parent = relationship("Locations", back_populates="locations_tasks_child",
                                         foreign_keys=[location_id])
+    
+    # applications to task
+    applications = relationship("Applications", back_populates="task", cascade="all, delete-orphan")

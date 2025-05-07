@@ -29,7 +29,7 @@ const Header = () => {
 		{ name: 'Home', href: '/' },
 		{ name: 'Dashboard', href: '/dashboard' },
 		{ name: 'Job Post', href: '/job-post' },
-		{ name: 'Profile', href: '/profile' },
+		{ name: 'Profile', href: userId ? `/profile/${userId}` : '/profile' },
 	];
 
 	const router = useRouter();

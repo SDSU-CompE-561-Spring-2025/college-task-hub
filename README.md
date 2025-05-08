@@ -12,19 +12,37 @@ The main goal is to offer students a way to earn extra cash without committing t
 
 ## Deployment
 
-To deploy this project, install hatch, clone the repo, and run the development server:
+To run the site, clone the repo, install hatch & npm, and run the application:
 
 ```bash
-pip install hatch
 git clone https://github.com/SDSU-CompE-561-Spring-2025/college-task-hub.git
+cd college-task-hub
+pip install hatch
+npm install
+```
+
+### Backend
+
+Prerequisites: Ensure you are in the home directory
+
+```bash
 cd Backend
 hatch shell
 hatch run dev
 ```
 
+### Frontend
+
+Prerequisites: Ensure you are in the home directory
+
+```bash
+cd Frontend
+npm run dev
+```
+
 ## Unit Tests
 
-To run units tests:
+To run unit tests:
 
 ```bash
 cd Backend
@@ -34,11 +52,21 @@ hatch run tests
 
 ## Software and Frameworks Used
 
+### Backend
+
 - 🐍 Python 3.11+
 - ⚡ FastAPI - Backend framework
-- 🐘 SQLite (sqlalchemy)
+- 🐘 PostgreSQL (via SQLAlchemy) – database
 - ✉️ Pydantic for data validation
 - 🧪 Hatch for environment management
+
+### Frontend
+
+- 🧠 TypeScript
+- ⚛️ React
+- 🧱 ShadCN UI – component library
+- 🪝 Next.js – server framework
+- 🎨 Tailwind CSS – styling
 
 ## Authors
 

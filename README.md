@@ -36,7 +36,7 @@ hatch run dev
 Prerequisites: Ensure you are in the home directory
 
 ```bash
-cd Frontend
+cd frontend
 npm run dev
 ```
 

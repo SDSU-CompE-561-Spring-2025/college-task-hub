@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { AuthDialogs } from '../auth/authDialog';
-import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 
 const HomeHeader = () => {
@@ -11,7 +10,7 @@ const HomeHeader = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const handleLogout = () => {
 		localStorage.removeItem('access_token');
-		localStorage.removeItem("user_role");
+		localStorage.removeItem('user_role');
 		setIsLoggedIn(false);
 		router.push('/');
 	};

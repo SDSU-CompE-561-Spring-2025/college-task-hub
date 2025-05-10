@@ -1,14 +1,28 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import AddressBar from '@/components/ui/addressBar';
 import DashboardButton from '@/components/home/dashboardButton';
 import ToolClusterLeft from '@/components/home/toolClusterLeft';
 import ToolClusterRight from '@/components/home/toolClusterRight';
-import { UserCheck, Watch, Wrench, Wifi, Truck, Smartphone } from 'lucide-react';
+import { UserCheck, Watch, Wrench, Wifi, Truck, Smartphone, XIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import SignInForm from '@/components/auth/signInForm';
+import RoleSelector from '../auth/roleSelector';
+import { Dialog, DialogContent, DialogTitle, DialogClose } from '@/components/ui/dialog';
 
 export default function HeroSection() {
 	const router = useRouter();
+	const [roleToSignIn, setRoleToSignIn] = useState<null | 'performer' | 'poster'>(null);
+
+	const handleNavigation = (role: 'performer' | 'poster') => {
+		const token = localStorage.getItem('access_token');
+		if (token) {
+			router.push(`/dashboard/${role}`);
+		} else {
+			setRoleToSignIn(role);
+		}
+	};
+
 	return (
 		<>
 			<div className="pt-10">
@@ -19,7 +33,7 @@ export default function HeroSection() {
 				<ToolClusterLeft />
 
 				<DashboardButton
-					onClick={() => router.push('/dashboard/performer')}
+					onClick={() => handleNavigation('performer')}
 					icon={
 						<>
 							<Wrench size={32} />
@@ -32,7 +46,7 @@ export default function HeroSection() {
 				</DashboardButton>
 
 				<DashboardButton
-					onClick={() => router.push('/dashboard/poster')}
+					onClick={() => handleNavigation('poster')}
 					icon={
 						<>
 							<UserCheck size={32} />
@@ -46,6 +60,29 @@ export default function HeroSection() {
 
 				<ToolClusterRight />
 			</div>
+
+			<Dialog
+				open={!!roleToSignIn}
+				onOpenChange={(open) => !open && setRoleToSignIn(null)}
+			>
+				<DialogContent className="[&>button]:hidden backdrop-blur-sm bg-white dark:bg-gray-900/80">
+					<DialogClose asChild={true}>
+						<div className="flex flex-row justify-self-end rounded-full p-1 hover:bg-gray-100">
+							<XIcon onClick={() => setRoleToSignIn(null)} />
+						</div>
+					</DialogClose>
+					<DialogTitle className="text-5xl mb-4">Sign In</DialogTitle>
+					<RoleSelector
+						role={roleToSignIn}
+						setRole={setRoleToSignIn}
+					/>
+
+					<SignInForm
+						role={roleToSignIn ?? 'performer'}
+						onSuccess={() => setRoleToSignIn(null)}
+					/>
+				</DialogContent>
+			</Dialog>
 		</>
 	);
 }

@@ -20,7 +20,7 @@ export function SignInDialog({
 	open: boolean;
 	setOpen: (open: boolean) => void;
 }) {
-	const [role, setRole] = useState<'performer' | 'poster'>('performer');
+	const [role, setRole] = useState<null | 'performer' | 'poster'>('performer');
 
 	return (
 		<Dialog
@@ -47,7 +47,10 @@ export function SignInDialog({
 					setRole={setRole}
 				/>
 
-				<SignInForm role={role} onSuccess={() => setOpen(false)} />
+				<SignInForm
+					role={role}
+					onSuccess={() => setOpen(false)}
+				/>
 			</DialogContent>
 		</Dialog>
 	);

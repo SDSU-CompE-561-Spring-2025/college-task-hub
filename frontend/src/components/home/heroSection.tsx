@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AddressBar from '@/components/ui/addressBar';
 import DashboardButton from '@/components/home/dashboardButton';
 import ToolClusterLeft from '@/components/home/toolClusterLeft';
@@ -9,10 +9,23 @@ import { useRouter } from 'next/navigation';
 import SignInForm from '@/components/auth/signInForm';
 import RoleSelector from '../auth/roleSelector';
 import { Dialog, DialogContent, DialogTitle, DialogClose } from '@/components/ui/dialog';
+import { useSearchParams } from 'next/navigation';
 
 export default function HeroSection() {
 	const router = useRouter();
 	const [roleToSignIn, setRoleToSignIn] = useState<null | 'performer' | 'poster'>(null);
+
+	const searchParams = useSearchParams();
+	const showSignInParam = searchParams.get('showSignIn');
+
+	useEffect(() => {
+		if (showSignInParam === 'performer' || showSignInParam === 'poster') {
+			setRoleToSignIn(showSignInParam);
+			const url = new URL(window.location.href);
+			url.searchParams.delete('showSignIn');
+			window.history.replaceState({}, '', url.toString());
+		}
+	}, [showSignInParam]);
 
 	const handleNavigation = (role: 'performer' | 'poster') => {
 		const token = localStorage.getItem('access_token');

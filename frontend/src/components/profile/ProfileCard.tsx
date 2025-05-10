@@ -17,7 +17,7 @@ interface Review {
 
 interface ProfileCardProps {
 	userId: number;
-	loggedInUserId: number; 
+	loggedInUserId: number;
 	username: string;
 	profilePictureUrl: string;
 	skills: string;
@@ -29,7 +29,6 @@ interface ProfileCardProps {
 	email: string;
 	phone_number: string;
 	viewerRole: 'Task Performer' | 'Task Poster';
-	
 }
 
 export default function ProfileCard({
@@ -80,7 +79,7 @@ export default function ProfileCard({
 		};
 		fetchReviews();
 	}, [userId]);
-	
+
 	useEffect(() => {
 		if (skills) setUpdatedSkills(skills);
 		if (email) setUpdatedEmail(email);
@@ -105,7 +104,7 @@ export default function ProfileCard({
 				roles: role === 'Task Performer' ? 'performer' : 'poster',
 				rating: rating ?? 0,
 			};
-			console.log("Sending profile update:", updatedData);
+			console.log('Sending profile update:', updatedData);
 			await updateProfile(userId, updatedData);
 
 			if (selectedFile) {
@@ -129,7 +128,7 @@ export default function ProfileCard({
 			alert('Failed to update profile.');
 		}
 	};
-	console.log("userId being passed to LeaveReview:", userId);
+	console.log('userId being passed to LeaveReview:', userId);
 	return (
 		<div className="relative w-full max-w-4xl p-8 rounded-lg shadow-md mx-auto border-2 border-black">
 			{/* Contact & review buttons only show for the task posters*/}
@@ -142,10 +141,9 @@ export default function ProfileCard({
 				)}
 				{viewerRole === 'Task Poster' && (
 					<LeaveReview
-					receiverId={userId}
-					giverId={loggedInUserId}
-    				onReviewSubmit={(newReview) => setFetchedReviews((prev) => [...prev, newReview])
-					}
+						receiverId={userId}
+						giverId={loggedInUserId}
+						onReviewSubmit={(newReview) => setFetchedReviews((prev) => [...prev, newReview])}
 					/>
 				)}
 			</div>

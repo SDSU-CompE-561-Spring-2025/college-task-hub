@@ -5,28 +5,40 @@ import { useParams } from 'next/navigation';
 import axios from 'axios';
 import ProfileCard from '@/components/profile/ProfileCard';
 import Layout from '@/components/layout/layout';
+import ProtectedRoute from '@/components/auth/protectedRoute';
 
 export default function ProfilePage() {
 	const [profileData, setProfileData] = useState<any>(null);
 	const [loggedInUserId, setLoggedInUserId] = useState<number | null>(null);
-	const [viewerRole, setViewerRole] = useState<"Task Performer" | "Task Poster">("Task Performer");
+	const [viewerRole, setViewerRole] = useState<'Task Performer' | 'Task Poster'>('Task Performer');
 
 	const params = useParams();
-	const profileUserId = Number(params.id); 
+	const profileUserId = Number(params.id);
 
-	console.log("Viewing profile of userId:", profileUserId);
+	const [isReady, setIsReady] = useState(false);
 
 	useEffect(() => {
-		const storedRole = localStorage.getItem("user_role");
-		if (storedRole === "performer") {
-			setViewerRole("Task Performer");
-		} else if (storedRole === "poster") {
-			setViewerRole("Task Poster");
+		const token = localStorage.getItem('access_token');
+		if (!token) return; // prevent 401 fetches
+		setIsReady(true);
+	}, []);
+
+	console.log('Viewing profile of userId:', profileUserId);
+
+	useEffect(() => {
+		const storedRole = localStorage.getItem('user_role');
+		if (storedRole === 'performer') {
+			setViewerRole('Task Performer');
+		} else if (storedRole === 'poster') {
+			setViewerRole('Task Poster');
 		}
 	}, []);
 
 	useEffect(() => {
+		if (!isReady || !profileUserId) return;
+
 		const token = localStorage.getItem('access_token');
+		if (!token) return;
 
 		const fetchProfile = async () => {
 			try {
@@ -35,7 +47,7 @@ export default function ProfilePage() {
 				});
 				setProfileData(res.data);
 			} catch (error) {
-				console.error("Error fetching profile data:", error);
+				console.error('Error fetching profile data:', error);
 			}
 		};
 
@@ -46,18 +58,16 @@ export default function ProfilePage() {
 				});
 				setLoggedInUserId(res.data.id);
 			} catch (error) {
-				console.error("Error fetching logged-in user:", error);
+				console.error('Error fetching logged-in user:', error);
 			}
 		};
 
-		if (profileUserId) {
-			fetchProfile();
-			fetchCurrentUser();
-		}
-	}, [profileUserId]);
+		fetchProfile();
+		fetchCurrentUser();
+	}, [isReady, profileUserId]);
 
 	if (!profileData || loggedInUserId === null) {
-		return <div className="text-center mt-10">Loading profile...</div>;
+		return <ProtectedRoute role="performer"> </ProtectedRoute>;
 	}
 
 	return (

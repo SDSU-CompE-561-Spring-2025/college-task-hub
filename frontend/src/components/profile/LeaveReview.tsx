@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
 import {MessageCircle,CheckSquare, X } from "lucide-react";
 import { submitReview } from "@/lib/api/submitReview";
+import { Button } from "@/components/ui/button";
 
 interface Review {
   reviewerName: string;
@@ -16,10 +18,11 @@ interface Review {
 
 interface LeaveReviewProps {
   receiverId: number;
+  giverId: number;
   onReviewSubmit: (review: Review) => void;
 }
 
-export default function LeaveReview({ receiverId, onReviewSubmit }: LeaveReviewProps) {
+export default function LeaveReview({ receiverId,giverId,onReviewSubmit }: LeaveReviewProps) {
 
   {/* Manages the rating */}
   const [rating, setRating] = useState(0);
@@ -31,12 +34,10 @@ export default function LeaveReview({ receiverId, onReviewSubmit }: LeaveReviewP
   
   const handleSubmit = async () => {
     const backendReview = {
-      //reviewerName: name,
-      //reviewerProfilePicture: `https://randomuser.me/api/portraits/${Math.random() < 0.5 ? "men" : "women"}/${Math.floor(Math.random() * 100)}.jpg`,
       job_title: taskCompleted,
       rating,
       comment,
-      giver_id: 2,      
+      giver_id: giverId,    
       receiver_id: receiverId, 
       created_at: new Date().toISOString() 
     };
@@ -64,52 +65,50 @@ export default function LeaveReview({ receiverId, onReviewSubmit }: LeaveReviewP
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-full">
-          Leave Review
-        </button>
+        <Button type="submit" className="bg-sky-500 hover:bg-sky-600">Leave Review</Button>
       </DialogTrigger>
 
-      <DialogContent className="bg-gray-300 max-w-md p-8">
+      <DialogContent className="bg-gray-100 max-w-xl p-6 rounded-lg">
         <DialogHeader className="flex flex-col items-center mt-5 p-0">
-          <DialogTitle className="text-2xl">Leave a Review</DialogTitle>
+          <DialogTitle className="text-2xl font-bold mb-6">Leave a Review</DialogTitle>
         </DialogHeader>
 
-        <div className="h-px bg-gray-300 my-4" />
+        <div className="h-px bg-black my-1" />
 
         <div className="space-y-4">
           {/* Name */}
           <div>
-            <label className="block text-lg mb-1">Name</label>
+            <label className="block text-medium font-medium text-black mb-1">Name</label>
             <Input
               placeholder="First Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="rounded-full border-gray-300 px-4 py-2 text-base bg-white"
+              className="shadow-sm rounded-md border border-gray-300 bg-gray-100 rounded-md px-4 py-2 text-base w-full"
             />
           </div>
           {/* Task Completed */}
           <div>
-            <label className="flex items-center gap-2 text-lg mb-1">
+            <label className="flex items-center gap-2 text-medium font-medium text-black mb-1">
               Task Completed
-              <CheckSquare className="h-5 w-5" />
+              <CheckSquare className="h-4 w-4" />
             </label>
             <Input
               placeholder="Walked Dog"
               value={taskCompleted}
               onChange={(e) => setTaskCompleted(e.target.value)}
-              className="rounded-full border-gray-300 px-4 py-2 text-base bg-white"
+              className="shadow-sm rounded-md border border-gray-300 bg-gray-100 rounded-md px-4 py-2 text-base w-full"
             />
           </div>
           {/* Review */}
           <div>
-            <label className="block text-lg mb-1 flex items-center gap-2">
-              Review <MessageCircle className="h-5 w-5" />
+            <label className="flex items-center gap-2 text-medium font-medium text-black mb-1">
+              Review <MessageCircle className="h-4 w-4" />
             </label>
-            <textarea
+            <Textarea
               placeholder="This experience was..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base bg-white"
+              className="shadow-sm rounded-md border border-gray-300 bg-gray-100 rounded-md px-4 py-2 text-base w-full"
             />
           </div>
           {/* Star Rating */}
@@ -125,10 +124,8 @@ export default function LeaveReview({ receiverId, onReviewSubmit }: LeaveReviewP
             ))}
           </div>
           <div className="flex justify-end">
-            {/* Submit Button */}
-          <button onClick={handleSubmit} className="text-right text-black font-semibold py-2">
-            Submit
-          </button>
+            {/* Submit Button*/}
+          <Button onClick={handleSubmit} type="submit" className="bg-sky-500 hover:bg-sky-600">Submit</Button>
           </div>
         </div>
       </DialogContent>

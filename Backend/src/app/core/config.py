@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     """
     Settings class to hold configuration values loaded from the .env file.
     """
-    USER: str
+    DBUSER: str
     PASSWORD: str
     HOST: str
     PORT: str

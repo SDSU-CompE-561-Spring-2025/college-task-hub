@@ -6,7 +6,7 @@ from app.core.config import settings
 # Gets the database URL from config.py
 
 # Fetch variables
-USER = settings.USER
+DBUSER = settings.DBUSER
 PASSWORD = settings.PASSWORD
 HOST = settings.HOST
 PORT = settings.PORT
@@ -14,7 +14,7 @@ DBNAME = settings.DBNAME
 SECRET_KEY = settings.SECRET_KEY
 
 # Construct the SQLAlchemy connection string
-DATABASE_URL = f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}?sslmode=require"
+DATABASE_URL = f"postgresql+psycopg2://{DBUSER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}?sslmode=require"
 
 # Create the SQLAlchemy engine
 engine = create_engine(DATABASE_URL)

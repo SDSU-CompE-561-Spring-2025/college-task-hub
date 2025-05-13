@@ -131,7 +131,7 @@ export default function ProfileCard({
 	};
 	console.log("userId being passed to LeaveReview:", userId);
 	return (
-		<div className="relative w-full max-w-4xl p-8 rounded-lg shadow-md mx-auto border-2 border-black">
+		<div className=" bg-gray-100 relative w-full max-w-4xl p-8 rounded-lg shadow-md mx-auto border-2 border-black">
 			{/* Contact & review buttons only show for the task posters*/}
 			<div className="absolute top-4 right-4 flex gap-4">
 				{viewerRole === 'Task Poster' && (
@@ -151,7 +151,7 @@ export default function ProfileCard({
 			</div>
 
 			{/* Profile info */}
-			<div className="flex items-center mb-8 space-x-8">
+			<div className="flex items-center mb-5 space-x-8">
 				<img
 					src={`http://localhost:8000/media/profile_images/${userId}.jpg?${photoTimestamp}`}
 					onError={(e) => {
@@ -184,59 +184,57 @@ export default function ProfileCard({
 					<h2 className="text-3xl font-bold text-black mb-1">{username}</h2>
 				</div>
 			</div>
+			<div className="h-[2] bg-black mb-5" />
 			{/* Creating two sides */}
 			<div className="flex gap-8 ">
-				{/* Left side */}
 				<div className="flex-1 flex flex-col space-y-6">
-					{/* Skills & Rating */}
-					<div className="space-y-4 ">
-						<p className="text-lg font-semibold text-gray-700 mb-4">
-							Rating:
-							<span className="ml-2">
-								{'⭐'.repeat(Math.ceil(averageRating))}
-								{'☆'.repeat(5 - Math.ceil(averageRating))}
-							</span>
+					{/* Left is Rating, Skills, and Role, Right is Email and Phone */}
+					<div className="flex flex-col lg:flex-row justify-between gap-8 w-full">
+					{/* Left column */}
+					<div className="space-y-4">
+						<p className="text-lg font-semibold text-gray-700">
+						Rating:
+						<span className="ml-2 mb-3">
+							{'⭐'.repeat(Math.ceil(averageRating))}
+							{'☆'.repeat(5 - Math.ceil(averageRating))}
+						</span>
 						</p>
-						<div>
-							{viewerRole === 'Task Performer' || viewerRole === 'Task Poster' ? (
-								<div className="flex items-center gap-2">
-									<div className="flex items-center gap-2">
-										<label className="text-gray-700 text-lg font-semibold">Top Skills:</label>
-										<p className="text-gray-700">{topSkills.join(', ') || 'No skills listed'}</p>
-									</div>
-								</div>
-							) : (
-								<p className="text-gray-700 font-semibold text-small">{adjustedSkills}</p>
-							)}
+						<div className="flex items-center gap-2">
+						<label className="mb-3 text-gray-700 text-lg font-semibold">Top Skills:</label>
+						<p className="mb-3 text-base text-gray-700">
+							{topSkills.join(', ') || 'No skills listed'}
+						</p>
+						</div>
+						<div className="flex items-center gap-2">
+						<label className="mb-3 text-gray-700 text-lg font-semibold">Role:</label>
+						<p className="text-gray-700 mb-3">{viewerRole}</p>
 						</div>
 					</div>
-					<p>
-						<span className="text-gray-700 text-lg font-semibold mb-2">Role:</span> {viewerRole}
-					</p>
 
-					{/* Email and phone number are only openly displayed for task performers.*/}
+					{/* Right column */}
 					{viewerRole === 'Task Performer' && (
-						<>
-							<div className="flex items-center gap-2">
-								<label className="text-gray-700 text-lg font-semibold">Email:</label>
-								<input
-									placeholder="example@email.com"
-									className="border px-4 py-1"
-									value={adjustedEmail}
-									onChange={(input) => setUpdatedEmail(input.target.value)}
-								/>
-							</div>
-							<div className="flex items-center gap-2">
-								<label className="text-gray-700 text-lg font-semibold">Phone Number:</label>
-								<input
-									placeholder="e.g.,(123)-456-7890"
-									className="border px-4 py-1"
-									value={adjustedPhoneNumber}
-									onChange={(input) => setUpdatedPhoneNumber(input.target.value)}
-								/>
-							</div>
-						</>
+						<div className="flex flex-col space-y-4 w-full max-w-sm">
+						<div className="flex flex-col">
+							<label className="text-gray-700 text-lg font-semibold">Email:</label>
+							<input
+							className="w-full max-w-xs  border border-gray-300 bg-gray-100 text-sm rounded-md px-4 py-2"
+							placeholder="example@email.com"
+							value={adjustedEmail}
+							onChange={(input) => setUpdatedEmail(input.target.value)}
+							/>
+						</div>
+						<div className="flex flex-col">
+							<label className="text-gray-700 text-lg font-semibold">Phone Number:</label>
+							<input
+							className="w-full max-w-xs  border border-gray-300 bg-gray-100 text-sm rounded-md px-4 py-2"
+							placeholder="e.g., 123-456-7890"
+							value={adjustedPhoneNumber}
+							onChange={(input) => setUpdatedPhoneNumber(input.target.value)}
+							/>
+						</div>
+						</div>
 					)}
+					</div>
 
 					{/* About and Recent Jobs and More Skills */}
 					<div className="flex gap-8">
@@ -244,7 +242,7 @@ export default function ProfileCard({
 							{/* Recent Jobs Box */}
 							<div>
 								<h2 className="text-xl font-bold mb-1 p-1">Recent Jobs</h2>
-								<div className="border border-black rounded-lg p-6 mb-8 mt-2">
+								<div className="w-[400px] h-[100px] p-4 bg-white rounded-2xl flex flex-col">
 									<div className="space-y-2">
 										{recentJobs.map((job, index) => (
 											<p key={index}>
@@ -256,25 +254,24 @@ export default function ProfileCard({
 									</div>
 								</div>
 							</div>
-
 							{/* More Skills Box */}
 							<div>
-								<h2 className="text-xl font-bold mb-1 p-1">More Skills</h2>
-								<div className="border border-black rounded-lg p-6 mb-8 mt-2">
+								<h2 className="text-xl font-bold p-1">More Skills</h2>
+								<div>
 									{viewerRole === 'Task Performer' ? (
 										<div className="block">
-											<p className="text-sm text-black mb-2 p-1">
-												First 3 skills appear under Top Skills.
-											</p>
 											<textarea
 												placeholder="e.g., Cooking, Cleaning, Organizing"
-												className="border px-4 py-2 w-full h-32 rounded-md resize-none"
+												className="w-[400px] h-[100px] p-4 bg-white rounded-2xl hover:shadow-lg transition-shadow flex flex-col"
 												value={adjustedSkills}
 												onChange={(input) => setUpdatedSkills(input.target.value)}
 											/>
+											<p className="text-sm text-gray-500 mt-2 p-1 y-3">
+												First 3 skills appear under Top Skills.
+											</p>
 										</div>
 									) : (
-										<p className="text-black text-sm">{skills}</p>
+										<p className="w-[400px] h-[100px] p-4 bg-white rounded-2xl flex flex-col">{skills}</p>
 									)}
 								</div>
 							</div>
@@ -282,7 +279,7 @@ export default function ProfileCard({
 						{/* Reviews Box */}
 						<div className="w-full max-w-md flex flex-col">
 							<h2 className="text-xl font-bold mb-1 p-1">Reviews</h2>
-							<div className="border border-black rounded-lg p-4 sm:p-6 mb-8 mt-2">
+							<div className="w-full max-w-md h-[200px] p-4 bg-white rounded-2xl flex flex-col">
 								<div className="space-y-6 max-h-[40vh] overflow-y-auto pr-2">
 									{fetchedReviews.length > 0 ? (
 										[...fetchedReviews].reverse().map((review, index) => (
@@ -305,7 +302,7 @@ export default function ProfileCard({
 						{viewerRole === 'Task Performer' && (
 							<div className="flex justify-end mt-4">
 								<button
-									className="absolute bottom-5 right-50 bg-sky-600 hover:bg-sky-700 text-white px-6 py-2 rounded-full"
+									className="absolute bottom-5 right-50 bg-sky-500 hover:bg-sky-600 text-white px-6 py-2 rounded-full"
 									onClick={Save}
 								>
 									Save Changes

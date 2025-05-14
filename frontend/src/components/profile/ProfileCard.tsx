@@ -6,6 +6,7 @@ import ReviewCard from '@/components/profile/ReviewCard';
 import ContactPopUp from '@/components/profile/ContactPopUp';
 import LeaveReview from '@/components/profile/LeaveReview';
 import { updateProfile } from '@/lib/api/updateProfile';
+import {Button} from '@/components/ui/button';
 
 interface Review {
 	reviewerName: string;
@@ -299,12 +300,12 @@ export default function ProfileCard({
 						{/*Saving changes*/}
 						{viewerRole === 'Task Performer' && (
 							<div className="flex justify-end mt-4">
-								<button
-									className="absolute bottom-5 right-50 bg-sky-500 hover:bg-sky-600 text-white px-6 py-2 rounded-full"
+								<Button
+									className="absolute bottom-5 right-50 bg-sky-500 hover:bg-sky-600 text-white px-6 py-2"
 									onClick={Save}
 								>
 									Save Changes
-								</button>
+								</Button>
 							</div>
 						)}
 					</div>

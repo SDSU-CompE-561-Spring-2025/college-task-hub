@@ -334,7 +334,7 @@ export default function JobPostForm() {
 
 				<Button
 					type="submit"
-					className="bg-sky-600 text-white rounded-lg px-4 py-2 font-semibold hover:bg-sky-700"
+					className="bg-sky-500 text-white rounded-lg px-4 py-2 font-semibold hover:bg-sky-600"
 				>
 					Post Job
 				</Button>

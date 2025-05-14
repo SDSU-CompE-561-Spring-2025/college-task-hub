@@ -21,6 +21,14 @@ pip install hatch
 npm install
 ```
 
+### Docker
+
+Prerequisites: Ensure Docker Desktop is installed and running. Ensure you are in the root directory
+
+```bash
+docker-compose up --build
+```
+
 ### Backend
 
 Prerequisites: Ensure you are in the home directory

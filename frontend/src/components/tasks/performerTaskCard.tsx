@@ -47,8 +47,10 @@ const PerformerTaskCard: React.FC<TaskCardProps> = ({ task, userId }) => {
 			if (res.ok || res.status === 409) {
 				setHasApplied(true);
 			} else {
-				const message = await res.text();
-				setError(`Failed to apply: ${message}`);
+				const data = await res.json();
+				// Extract the error message from the response
+				const errorMessage = data.detail || 'Failed to apply. Please try again.';
+				setError(errorMessage);
 			}
 		} catch (err) {
 			setError('Error applying. Please try again later.');

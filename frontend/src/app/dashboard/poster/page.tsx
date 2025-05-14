@@ -13,6 +13,7 @@ export default function PosterDashboardPage() {
 	const [inProgressTasks, setInProgressTasks] = useState<TaskType[]>([]);
 	const [pastTasks, setPastTasks] = useState<TaskType[]>([]);
 	const [applicationsByTask, setApplicationsByTask] = useState<{ [taskId: number]: any[] }>({}); // Storing applications by taskId
+	const [taskTitles, setTaskTitles] = useState<{ [taskId: number]: string }>({}); // Store task titles
 
 	useEffect(() => {
 		const loadTasks = async () => {
@@ -22,9 +23,16 @@ export default function PosterDashboardPage() {
 				setInProgressTasks(myTasks.filter((t) => t.status === 'in-progress'));
 				setPastTasks(myTasks.filter((t) => t.status === 'completed'));
 				
+				// Create a map of task IDs to titles
+				const titles = myTasks.reduce((acc, task) => ({
+					...acc,
+					[task.id]: task.title
+				}), {});
+				setTaskTitles(titles);
+				
 				// After tasks are loaded, load applications for each task
 				myTasks.forEach((task) => {
-					loadApplications(task.id); // Call the function for each task's ID
+					loadApplications(task.id);
 				});
 			} catch (err) {
 				console.error('Failed to load poster tasks:', err);
@@ -33,17 +41,13 @@ export default function PosterDashboardPage() {
 
 		const loadApplications = async (taskId: number) => {
 			try {
-				console.log("Getting token");
 				const token = localStorage.getItem('access_token');
 				if (!token) return;
 
 				const apps = await fetchApplicationsForTask(taskId, token);
-				console.log("Applications for Task:", apps); // Log applications for debugging
-
-				// Update the applications state for each task
 				setApplicationsByTask((prevState) => ({
 					...prevState,
-					[taskId]: apps, // Store applications by taskId
+					[taskId]: apps,
 				}));
 			} catch (err) {
 				console.error('Failed to load applications for task:', err);
@@ -53,50 +57,79 @@ export default function PosterDashboardPage() {
 		loadTasks();
 	}, []);
 
-
 	return (
-		<div>
+		<div className="min-h-screen bg-gray-50">
 			<Layout>
-				<div className="flex flex-col items-center justify-center text-black mb-8">
-					<h1 className="text-3xl font-semibold mt-8 mb-4">My Listings</h1>
-					<TaskSection
-						title="Unassigned"
-						tasks={unassignedTasks}
-						setTasks={setUnassignedTasks}
-					/>
-
-					<TaskSection
-						title="In Progress"
-						tasks={inProgressTasks}
-						setTasks={setInProgressTasks}
-					/>
-
-					<TaskSection
-						title="Past"
-						tasks={pastTasks}
-						setTasks={setPastTasks}
-					/>
-
-					<div className="w-6/10 mt-8 flex flex-col items-center justify-center">
-						<h1 className="text-3xl font-semibold mt-8 mb-4">My Applications</h1>
-
-						{Object.keys(applicationsByTask).length > 0 ? (
-							<div className="flex flex-col gap-4 w-full">
-								{Object.entries(applicationsByTask).map(([taskId, applications]) => (
-									<TaskApplicationsSection
-										key={taskId}
-										taskId={Number(taskId)}
-										applications={applications}
-										taskTitle={taskId}
-									/>
-								))}
-							</div>
-						) : (
-							<p>No applications yet.</p>
-						)}
+				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+					{/* Header Section */}
+					<div className="mb-8">
+						<h1 className="text-4xl font-bold text-gray-900">My Listings</h1>
+						<p className="mt-2 text-lg text-gray-600">Manage your posted tasks and review applications</p>
 					</div>
 
-					
+					{/* Tasks Sections */}
+					<div className="space-y-8">
+						{/* Unassigned Tasks */}
+						<div className="bg-white rounded-lg shadow-sm p-6">
+							<h2 className="text-2xl font-semibold text-gray-900 mb-4">Unassigned Tasks</h2>
+							{unassignedTasks.length > 0 ? (
+								<TaskSection
+									title=""
+									tasks={unassignedTasks}
+									setTasks={setUnassignedTasks}
+								/>
+							) : (
+								<p className="text-gray-500 italic">No unassigned tasks</p>
+							)}
+						</div>
+
+						{/* In Progress Tasks */}
+						<div className="bg-white rounded-lg shadow-sm p-6">
+							<h2 className="text-2xl font-semibold text-gray-900 mb-4">In Progress</h2>
+							{inProgressTasks.length > 0 ? (
+								<TaskSection
+									title=""
+									tasks={inProgressTasks}
+									setTasks={setInProgressTasks}
+								/>
+							) : (
+								<p className="text-gray-500 italic">No tasks in progress</p>
+							)}
+						</div>
+
+						{/* Past Tasks */}
+						<div className="bg-white rounded-lg shadow-sm p-6">
+							<h2 className="text-2xl font-semibold text-gray-900 mb-4">Completed Tasks</h2>
+							{pastTasks.length > 0 ? (
+								<TaskSection
+									title=""
+									tasks={pastTasks}
+									setTasks={setPastTasks}
+								/>
+							) : (
+								<p className="text-gray-500 italic">No completed tasks</p>
+							)}
+						</div>
+
+						{/* Applications Section */}
+						<div className="bg-white rounded-lg shadow-sm p-6">
+							<h2 className="text-2xl font-semibold text-gray-900 mb-4">Task Applications</h2>
+							{Object.keys(applicationsByTask).length > 0 ? (
+								<div className="space-y-6">
+									{Object.entries(applicationsByTask).map(([taskId, applications]) => (
+										<TaskApplicationsSection
+											key={taskId}
+											taskId={Number(taskId)}
+											applications={applications}
+											taskTitle={taskTitles[Number(taskId)] || `Task ${taskId}`}
+										/>
+									))}
+								</div>
+							) : (
+								<p className="text-gray-500 italic">No applications received yet</p>
+							)}
+						</div>
+					</div>
 				</div>
 			</Layout>
 		</div>

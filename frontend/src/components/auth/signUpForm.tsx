@@ -4,9 +4,9 @@ import { signUp } from '@/lib/api/users';
 import { UserCreate } from '@/types/users';
 
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+const NAME_REGEX = /^[A-Za-z]+ [A-Za-z]+$/;
 
 export default function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
-	// Use state to manage form data
 	const [formData, setFormData] = useState<UserCreate>({
 		name: '',
 		email: '',
@@ -15,20 +15,29 @@ export default function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
 
 	const [showPassword, setShowPassword] = useState(false);
 	const [errors, setErrors] = useState<{ [key: string]: string }>({});
+	const [serverError, setServerError] = useState<string | null>(null);
 
 	const validate = () => {
 		const newErrors: typeof errors = {};
 		const [firstName, lastName] = formData.name.trim().split(' ');
 
-		if (!firstName) newErrors.firstName = 'First name is required.';
-		if (!lastName) newErrors.lastName = 'Last name is required.';
+		// Name validation
+		if (!formData.name.trim()) {
+			newErrors.name = 'Name is required.';
+		} else if (!NAME_REGEX.test(formData.name.trim())) {
+			newErrors.name = 'Name must contain only letters and include both first and last name.';
+		} else if (firstName.length < 2 || lastName.length < 2) {
+			newErrors.name = 'First and last name must be at least 2 characters long.';
+		}
 
+		// Email validation
 		if (!formData.email) {
 			newErrors.email = 'Email is required.';
 		} else if (!/\S+@\S+\.\S+/.test(formData.email)) {
 			newErrors.email = 'Enter a valid email.';
 		}
 
+		// Password validation
 		if (!formData.password) {
 			newErrors.password = 'Password is required.';
 		} else if (!PASSWORD_REGEX.test(formData.password)) {
@@ -40,25 +49,36 @@ export default function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
 		return Object.keys(newErrors).length === 0;
 	};
 
-	// Handle form submission
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		setServerError(null);
+		
 		if (!validate()) return;
 		
 		try {
 			const response = await signUp(formData);
 			console.log('User signed up successfully:', response);
 			if (onSuccess) {
-				onSuccess(); // Call the onSuccess callback if provided
+				onSuccess();
 			}
 		} catch (error: any) {
+			console.error('Error signing up:', error);
+			
+			// Handle specific error cases
 			if (error.response?.status === 409) {
-				setErrors({ email: 'An account with this email already exists.' });
+				setServerError('An account with this email already exists.');
+			} else if (error.response?.status === 422) {
+				// Handle validation errors from the server
+				const validationErrors = error.response.data.detail;
+				if (Array.isArray(validationErrors)) {
+					const errorMessages = validationErrors.map(err => err.msg).join(', ');
+					setServerError(errorMessages);
+				} else {
+					setServerError('Invalid input. Please check your information and try again.');
+				}
 			} else {
-				console.error('Error signing up:', error);
-				alert('Something went wrong. Please try again.');
+				setServerError('An unexpected error occurred. Please try again later.');
 			}
-
 		}
 	};
 
@@ -66,6 +86,12 @@ export default function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
 
 	return (
 		<form onSubmit={handleSubmit} noValidate>
+			{serverError && (
+				<div className="bg-red-100 text-red-700 p-3 rounded-md mb-4">
+					{serverError}
+				</div>
+			)}
+
 			{/* First and Last Name */}
 			<div className="flex flex-row mx-2 my-4 gap-x-8">
 				<div className="w-full">
@@ -75,12 +101,13 @@ export default function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
 						placeholder="Required"
 						className="w-full p-2 rounded-lg bg-gray-100"
 						value={getNameParts()[0] || ''}
-						onChange={(e) =>
+						onChange={(e) => {
+							const value = e.target.value.replace(/[^A-Za-z]/g, '');
 							setFormData({
 								...formData,
-								name: `${e.target.value} ${getNameParts()[1] || ''}`.trim(),
-							})
-						}
+								name: `${value} ${getNameParts()[1] || ''}`.trim(),
+							});
+						}}
 					/>
 					{errors.firstName && (
 						<p className="text-red-600 text-sm mt-1">{errors.firstName}</p>
@@ -94,12 +121,13 @@ export default function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
 						placeholder="Required"
 						className="w-full p-2 rounded-lg bg-gray-100"
 						value={getNameParts()[1] || ''}
-						onChange={(e) =>
+						onChange={(e) => {
+							const value = e.target.value.replace(/[^A-Za-z]/g, '');
 							setFormData({
 								...formData,
-								name: `${getNameParts()[0] || ''} ${e.target.value}`.trim(),
-							})
-						}
+								name: `${getNameParts()[0] || ''} ${value}`.trim(),
+							});
+						}}
 					/>
 					{errors.lastName && (
 						<p className="text-red-600 text-sm mt-1">{errors.lastName}</p>
@@ -157,7 +185,7 @@ export default function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
 			</div>
 
 			<p className="text-gray-400 text-sm text-center mx-12">
-				By tapping the “Create Account" button, you agree to TaskU’s Terms, including a waiver of
+				By tapping the "Create Account" button, you agree to TaskU's Terms, including a waiver of
 				your jury trial right, and Privacy Policy.
 			</p>
 		</form>

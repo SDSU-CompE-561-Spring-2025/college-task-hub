@@ -131,7 +131,7 @@ export default function ProfileCard({
 	};
 	console.log('userId being passed to LeaveReview:', userId);
 	return (
-		<div className=" bg-gray-100 relative w-full max-w-4xl p-8 rounded-lg shadow-md mx-auto border-2 border-black">
+		<div className=" bg-gray-100 relative w-full max-w-4xl p-8 rounded-lg mx-auto">
 			{/* Contact & review buttons only show for the task posters*/}
 			<div className="absolute top-4 right-4 flex gap-4">
 				{viewerRole === 'Task Poster' && (

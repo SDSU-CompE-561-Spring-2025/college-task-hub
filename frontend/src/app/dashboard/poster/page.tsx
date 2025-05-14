@@ -2,136 +2,127 @@
 
 import React, { useEffect, useState } from 'react';
 import Layout from '@/components/layout/layout';
-import TaskSection from '@/components/tasks/taskSection';
+import PosterTaskCard from '@/components/tasks/posterTaskCard';
 import { TaskType } from '@/types/task';
-import { fetchPosterTasks } from '@/lib/api/tasks';
+import { fetchPosterTasks, deleteTask } from '@/lib/api/tasks';
 import { fetchApplicationsForTask } from '@/lib/api/applications';
-import TaskApplicationsSection from '@/components/tasks/taskApplicationSection';
 
 export default function PosterDashboardPage() {
-	const [unassignedTasks, setUnassignedTasks] = useState<TaskType[]>([]);
-	const [inProgressTasks, setInProgressTasks] = useState<TaskType[]>([]);
-	const [pastTasks, setPastTasks] = useState<TaskType[]>([]);
-	const [applicationsByTask, setApplicationsByTask] = useState<{ [taskId: number]: any[] }>({}); // Storing applications by taskId
-	const [taskTitles, setTaskTitles] = useState<{ [taskId: number]: string }>({}); // Store task titles
+    const [unassignedTasks, setUnassignedTasks] = useState<TaskType[]>([]);
+    const [inProgressTasks, setInProgressTasks] = useState<TaskType[]>([]);
+    const [pastTasks, setPastTasks] = useState<TaskType[]>([]);
+    const [applicationsByTask, setApplicationsByTask] = useState<{ [taskId: number]: any[] }>({}); // Storing applications by taskId
 
-	useEffect(() => {
-		const loadTasks = async () => {
-			try {
-				const myTasks = await fetchPosterTasks();
-				setUnassignedTasks(myTasks.filter((t) => t.status === 'unassigned'));
-				setInProgressTasks(myTasks.filter((t) => t.status === 'in-progress'));
-				setPastTasks(myTasks.filter((t) => t.status === 'completed'));
-				
-				// Create a map of task IDs to titles
-				const titles = myTasks.reduce((acc, task) => ({
-					...acc,
-					[task.id]: task.title
-				}), {});
-				setTaskTitles(titles);
-				
-				// After tasks are loaded, load applications for each task
-				myTasks.forEach((task) => {
-					loadApplications(task.id);
-				});
-			} catch (err) {
-				console.error('Failed to load poster tasks:', err);
-			}
-		};
+    useEffect(() => {
+        const loadTasks = async () => {
+            try {
+                const myTasks = await fetchPosterTasks();
+                setUnassignedTasks(myTasks.filter((t) => t.status === 'unassigned'));
+                setInProgressTasks(myTasks.filter((t) => t.status === 'in-progress'));
+                setPastTasks(myTasks.filter((t) => t.status === 'completed'));
 
-		const loadApplications = async (taskId: number) => {
-			try {
-				const token = localStorage.getItem('access_token');
-				if (!token) return;
+                // After tasks are loaded, load applications for each task
+                myTasks.forEach((task) => {
+                    loadApplications(task.id); // Call the function for each task's ID
+                });
+            } catch (err) {
+                console.error('Failed to load poster tasks:', err);
+            }
+        };
 
-				const apps = await fetchApplicationsForTask(taskId, token);
-				setApplicationsByTask((prevState) => ({
-					...prevState,
-					[taskId]: apps,
-				}));
-			} catch (err) {
-				console.error('Failed to load applications for task:', err);
-			}
-		};
+        const loadApplications = async (taskId: number) => {
+            try {
+                console.log('Getting token');
+                const token = localStorage.getItem('access_token');
+                if (!token) return;
 
-		loadTasks();
-	}, []);
+                const apps = await fetchApplicationsForTask(taskId, token);
+                console.log('Applications for Task:', apps); // Log applications for debugging
 
-	return (
-		<div className="min-h-screen bg-gray-50">
-			<Layout>
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-					{/* Header Section */}
-					<div className="mb-8">
-						<h1 className="text-4xl font-bold text-gray-900">My Listings</h1>
-						<p className="mt-2 text-lg text-gray-600">Manage your posted tasks and review applications</p>
-					</div>
+                // Update the applications state for each task
+                setApplicationsByTask((prevState) => ({
+                    ...prevState,
+                    [taskId]: apps, // Store applications by taskId
+                }));
+            } catch (err) {
+                console.error('Failed to load applications for task:', err);
+            }
+        };
 
-					{/* Tasks Sections */}
-					<div className="space-y-8">
-						{/* Unassigned Tasks */}
-						<div className="bg-white rounded-lg shadow-sm p-6">
-							<h2 className="text-2xl font-semibold text-gray-900 mb-4">Unassigned Tasks</h2>
-							{unassignedTasks.length > 0 ? (
-								<TaskSection
-									title=""
-									tasks={unassignedTasks}
-									setTasks={setUnassignedTasks}
-								/>
-							) : (
-								<p className="text-gray-500 italic">No unassigned tasks</p>
-							)}
-						</div>
+        loadTasks();
+    }, []);
 
-						{/* In Progress Tasks */}
-						<div className="bg-white rounded-lg shadow-sm p-6">
-							<h2 className="text-2xl font-semibold text-gray-900 mb-4">In Progress</h2>
-							{inProgressTasks.length > 0 ? (
-								<TaskSection
-									title=""
-									tasks={inProgressTasks}
-									setTasks={setInProgressTasks}
-								/>
-							) : (
-								<p className="text-gray-500 italic">No tasks in progress</p>
-							)}
-						</div>
+    const handleDelete = async (taskId: number) => {
+        try {
+            await deleteTask(taskId); // Call the API function
 
-						{/* Past Tasks */}
-						<div className="bg-white rounded-lg shadow-sm p-6">
-							<h2 className="text-2xl font-semibold text-gray-900 mb-4">Completed Tasks</h2>
-							{pastTasks.length > 0 ? (
-								<TaskSection
-									title=""
-									tasks={pastTasks}
-									setTasks={setPastTasks}
-								/>
-							) : (
-								<p className="text-gray-500 italic">No completed tasks</p>
-							)}
-						</div>
+            // Update the state to remove the task
+            setUnassignedTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+            setInProgressTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+            setPastTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
 
-						{/* Applications Section */}
-						<div className="bg-white rounded-lg shadow-sm p-6">
-							<h2 className="text-2xl font-semibold text-gray-900 mb-4">Task Applications</h2>
-							{Object.keys(applicationsByTask).length > 0 ? (
-								<div className="space-y-6">
-									{Object.entries(applicationsByTask).map(([taskId, applications]) => (
-										<TaskApplicationsSection
-											key={taskId}
-											taskId={Number(taskId)}
-											applications={applications}
-											taskTitle={taskTitles[Number(taskId)] || `Task ${taskId}`}
-										/>
-									))}
-								</div>
-							) : (
-								<p className="text-gray-500 italic">No applications received yet</p>
-							)}
-						</div>
-					</div>
-				</div>
-			</Layout>
-		</div>
-	);
+            console.log(`Task ${taskId} deleted successfully`);
+        } catch (err) {
+            console.error(`Failed to delete task ${taskId}:`, err);
+        }
+    };
+
+    const handleEdit = (taskId: number) => {
+        console.log(`Edit task ${taskId}`);
+        // Redirect to an edit page or open a modal for editing
+        window.location.href = `/tasks/edit/${taskId}`;
+    };
+
+    return (
+        <Layout>
+            <div className="flex flex-col items-center justify-center text-black mb-8">
+                <h1 className="text-3xl font-semibold mt-8 mb-4">My Listings</h1>
+
+                {/* Unassigned Tasks */}
+                <div className="w-full">
+                    <h2 className="text-2xl font-bold mb-4">Unassigned</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {unassignedTasks.map((task) => (
+                            <PosterTaskCard
+                                key={task.id}
+                                task={task}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
+                            />
+                        ))}
+                    </div>
+                </div>
+
+                {/* In Progress Tasks */}
+                <div className="w-full">
+                    <h2 className="text-2xl font-bold mb-4">In Progress</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {inProgressTasks.map((task) => (
+                            <PosterTaskCard
+                                key={task.id}
+                                task={task}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
+                            />
+                        ))}
+                    </div>
+                </div>
+
+                {/* Completed Tasks */}
+                <div className="w-full mt-8">
+                    <h2 className="text-2xl font-bold mb-4">Completed</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {pastTasks.map((task) => (
+                            <PosterTaskCard
+                                key={task.id}
+                                task={task}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </Layout>
+    );
 }

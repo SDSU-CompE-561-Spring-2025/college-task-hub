@@ -3,10 +3,11 @@ import { TaskType } from '@/types/task';
 
 interface PosterTaskCardProps {
     task: TaskType;
+    onEdit: (taskId: number) => void;
     onDelete: (taskId: number) => void;
 }
 
-const PosterTaskCard: React.FC<PosterTaskCardProps> = ({ task, onDelete }) => {
+const PosterTaskCard: React.FC<PosterTaskCardProps> = ({ task, onEdit, onDelete }) => {
     return (
         <div className="border rounded-lg shadow-md p-4 bg-white">
             {/* Task Title */}
@@ -29,7 +30,13 @@ const PosterTaskCard: React.FC<PosterTaskCardProps> = ({ task, onDelete }) => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-between mt-4">
+                <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    onClick={() => onEdit(task.id)}
+                >
+                    Edit
+                </button>
                 <button
                     className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                     onClick={() => onDelete(task.id)}

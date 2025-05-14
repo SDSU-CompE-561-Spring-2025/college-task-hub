@@ -13,6 +13,7 @@ export default function PosterDashboardPage() {
 	const [inProgressTasks, setInProgressTasks] = useState<TaskType[]>([]);
 	const [pastTasks, setPastTasks] = useState<TaskType[]>([]);
 	const [applicationsByTask, setApplicationsByTask] = useState<{ [taskId: number]: any[] }>({}); // Storing applications by taskId
+	const [taskTitles, setTaskTitles] = useState<{ [taskId: number]: string }>({}); // Store task titles
 
 	useEffect(() => {
 		const loadTasks = async () => {
@@ -22,9 +23,16 @@ export default function PosterDashboardPage() {
 				setInProgressTasks(myTasks.filter((t) => t.status === 'in-progress'));
 				setPastTasks(myTasks.filter((t) => t.status === 'completed'));
 				
+				// Create a map of task IDs to titles
+				const titles = myTasks.reduce((acc, task) => ({
+					...acc,
+					[task.id]: task.title
+				}), {});
+				setTaskTitles(titles);
+				
 				// After tasks are loaded, load applications for each task
 				myTasks.forEach((task) => {
-					loadApplications(task.id); // Call the function for each task's ID
+					loadApplications(task.id);
 				});
 			} catch (err) {
 				console.error('Failed to load poster tasks:', err);
@@ -33,17 +41,13 @@ export default function PosterDashboardPage() {
 
 		const loadApplications = async (taskId: number) => {
 			try {
-				console.log("Getting token");
 				const token = localStorage.getItem('access_token');
 				if (!token) return;
 
 				const apps = await fetchApplicationsForTask(taskId, token);
-				console.log("Applications for Task:", apps); // Log applications for debugging
-
-				// Update the applications state for each task
 				setApplicationsByTask((prevState) => ({
 					...prevState,
-					[taskId]: apps, // Store applications by taskId
+					[taskId]: apps,
 				}));
 			} catch (err) {
 				console.error('Failed to load applications for task:', err);
@@ -52,7 +56,6 @@ export default function PosterDashboardPage() {
 
 		loadTasks();
 	}, []);
-
 
 	return (
 		<div className="min-h-screen bg-gray-50">
@@ -118,7 +121,7 @@ export default function PosterDashboardPage() {
 											key={taskId}
 											taskId={Number(taskId)}
 											applications={applications}
-											taskTitle={taskId}
+											taskTitle={taskTitles[Number(taskId)] || `Task ${taskId}`}
 										/>
 									))}
 								</div>

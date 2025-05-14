@@ -58,24 +58,68 @@ const PerformerDashboardPage = () => {
 	return (
 		<ProtectedRoute role="performer">
 			<Layout>
-				<div className="flex min-h-screen mt-4">
-					<SuggestionsBar
-						categories={categories}
-						onCategorySelect={(category) => setSelectedCategory(category)}
-					/>
+				<div className="min-h-screen bg-gray-50">
+					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+						{/* Header Section */}
+						<div className="mb-8">
+							<h1 className="text-4xl font-bold text-gray-900">Find Tasks</h1>
+							<p className="mt-2 text-lg text-gray-600">Browse and apply for tasks that match your skills</p>
+						</div>
 
-					<main className="flex-1 p-6 space-y-6">
-						<SearchBar />
-						{loading && <p>Loading tasks...</p>}
-						{error && <p className="text-red-500">{error}</p>}
-						{/* Only render TaskSuggestions if userId is not null */}
-						{!loading && !error && userId !== null && (
-							<TaskSuggestions
-								tasks={tasks}
-								loggedInUserId={userId}
-							/>
-						)}
-					</main>
+						<div className="flex flex-col lg:flex-row gap-8">
+							{/* Sidebar */}
+							<div className="lg:w-64 flex-shrink-0">
+								<div className="bg-white rounded-lg shadow-sm p-6">
+									<h2 className="text-lg font-semibold text-gray-900 mb-4">Categories</h2>
+									<SuggestionsBar
+										categories={categories}
+										onCategorySelect={(category) => setSelectedCategory(category)}
+									/>
+								</div>
+							</div>
+
+							{/* Main Content */}
+							<main className="flex-1">
+								<div className="bg-white rounded-lg shadow-sm p-6">
+									{/* Search Bar */}
+									<div className="mb-6">
+										<SearchBar />
+									</div>
+
+									{/* Loading State */}
+									{loading && (
+										<div className="flex items-center justify-center py-12">
+											<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
+										</div>
+									)}
+
+									{/* Error State */}
+									{error && (
+										<div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+											<p className="text-red-600">{error}</p>
+										</div>
+									)}
+
+									{/* Task List */}
+									{!loading && !error && userId !== null && (
+										<div className="space-y-6">
+											<TaskSuggestions
+												tasks={tasks}
+												loggedInUserId={userId}
+											/>
+										</div>
+									)}
+
+									{/* Empty State */}
+									{!loading && !error && tasks.length === 0 && (
+										<div className="text-center py-12">
+											<p className="text-gray-500 text-lg">No tasks found matching your criteria</p>
+										</div>
+									)}
+								</div>
+							</main>
+						</div>
+					</div>
 				</div>
 			</Layout>
 		</ProtectedRoute>

@@ -16,7 +16,7 @@ export default function DashboardButton({ icon, children, onClick }: DashboardBu
         bg-sky-200 hover:bg-sky-400 
         border-2 border-black 
         rounded-lg 
-        h-45 w-45 
+        h-64 w-64 
         flex flex-col items-center justify-center
         space-y-1 
         cursor-pointer

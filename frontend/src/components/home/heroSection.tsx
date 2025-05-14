@@ -42,7 +42,7 @@ export default function HeroSection() {
 				<AddressBar />
 			</div>
 
-			<div className="flex w-full justify-between items-center pt-30 pb-36 space-x-25 overflow-hidden">
+			<div className="flex w-full justify-between items-center pt-30 pb-24 space-x-25 overflow-hidden">
 				<ToolClusterLeft />
 
 				<DashboardButton

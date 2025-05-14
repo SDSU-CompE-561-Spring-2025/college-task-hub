@@ -11,10 +11,10 @@ export default function LearnMoreButton() {
 
   return (
     <div
-      className="pb-30 mt-5 text-center cursor-pointer"
+      className="pb-15 text-center cursor-pointer"
       onClick={handleScroll}
     >
-      <p className="font-semibold text-lg">Learn More ↓</p>
+      <p className="font-semibold text-xl">Learn More ↓</p>
     </div>
   );
 }
